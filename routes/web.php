@@ -23,6 +23,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('order', OrderPage::class)->name('order');
 
+    // Order Tracking Routes
+    Route::get('orders/track/{orderId?}', App\Livewire\Order\OrderTrackingPage::class)->name('orders.track');
+    Route::get('orders/history', App\Livewire\Order\OrderHistoryPage::class)->name('orders.history');
+
     // Gift Card Routes
     Route::get('gift-cards/send', SendGiftCard::class)->name('gift-cards.send');
     Route::get('gift-cards/redeem', RedeemGiftCard::class)->name('gift-cards.redeem');

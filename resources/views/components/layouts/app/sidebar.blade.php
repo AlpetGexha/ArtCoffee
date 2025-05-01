@@ -17,6 +17,7 @@
                     <flux:navlist.item icon="home" :href="route('order')" :current="request()->routeIs('order')" wire:navigate>{{ __('order') }}</flux:navlist.item>
                     <flux:navlist.item icon="home" :href="route('gift-cards.send')" :current="request()->routeIs('gift-cards.send')" wire:navigate>{{ __('gift-cards.send') }}</flux:navlist.item>
                     <flux:navlist.item icon="home" :href="route('gift-cards.redeem')" :current="request()->routeIs('gift-cards.redeem')" wire:navigate>{{ __('gift-cards.redeem') }}</flux:navlist.item>
+                    <flux:navlist.item icon="home" :href="route('orders.history')" :current="request()->routeIs('orders.history')" wire:navigate>{{ __('orders.history') }}</flux:navlist.item>
 
                 </flux:navlist.group>
             </flux:navlist>

@@ -115,4 +115,16 @@ final class Order extends Model
     {
         return $query->whereBetween('created_at', [$startDate, $endDate]);
     }
+    
+    /**
+     * Scope a query to only include in-progress orders.
+     */
+    public function scopeInProgress($query)
+    {
+        return $query->whereIn('status', [
+            OrderStatus::PENDING,
+            OrderStatus::PROCESSING,
+            OrderStatus::READY
+        ])->orderBy('created_at', 'desc');
+    }
 }

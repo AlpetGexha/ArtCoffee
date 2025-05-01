@@ -215,9 +215,10 @@ final class OrderPage extends Component
 
         // Calculate totals
         $subtotal = $this->calculateCartTotal();
-        $tax = $subtotal * 0.10; // Assuming 10% tax
-        $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
-        $totalAmount = $subtotal + $tax - $discount;
+        // $tax = $subtotal * 0.0;
+        // $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
+        // $totalAmount = $subtotal + $tax - $discount;
+        $totalAmount = $subtotal; // Adjust this based on your business logic
 
         // Get the default branch (adjust this based on your business logic)
         $defaultBranch = \App\Models\Branch::first();
@@ -259,10 +260,15 @@ final class OrderPage extends Component
             // Create order item customizations
             if (! empty($item['customizations'])) {
                 foreach ($item['customizations'] as $category => $optionId) {
-                    OrderItemCustomization::create([
-                        'order_item_id' => $orderItem->id,
-                        'product_option_id' => $optionId,
-                    ]);
+                    // Retrieve the product option to get its price
+                    $productOption = ProductOption::find($optionId);
+ if ($productOption) {
+                        OrderItemCustomization::create([
+                            'order_item_id' => $orderItem->id,
+                            'product_option_id' => $optionId,
+                            'option_price' => $productOption->additional_price ?? 0.00,
+                        ]);
+                    }
                 }
             }
         }
@@ -283,7 +289,8 @@ final class OrderPage extends Component
         $this->paymentMethod = auth()->check() ? 'wallet' : 'cash';
 
         // Redirect to order confirmation
-        return redirect()->route('order.confirmation', ['order' => $order->id]);
+
+        return redirect()->route('orders.track',['order'=>])
     }
 
     /**
