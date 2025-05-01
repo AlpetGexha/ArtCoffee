@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Bavix\Wallet\Interfaces\Wallet;
+use Bavix\Wallet\Traits\HasWalletFloat;
 
-final class User extends Authenticatable
+final class User extends Authenticatable implements Wallet
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasWalletFloat;
 
     /**
      * The attributes that should be hidden for serialization.
@@ -27,7 +29,7 @@ final class User extends Authenticatable
     {
         return Str::of($this->name)
             ->explode(' ')
-            ->map(fn (string $name) => Str::of($name)->substr(0, 1))
+            ->map(fn(string $name) => Str::of($name)->substr(0, 1))
             ->implode('');
     }
 
@@ -37,6 +39,22 @@ final class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get gift cards sent by the user.
+     */
+    public function sentGiftCards(): HasMany
+    {
+        return $this->hasMany(GiftCard::class, 'sender_id');
+    }
+
+    /**
+     * Get gift cards received by the user.
+     */
+    public function receivedGiftCards(): HasMany
+    {
+        return $this->hasMany(GiftCard::class, 'recipient_id');
     }
 
     /**
