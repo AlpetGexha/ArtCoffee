@@ -24,4 +24,14 @@ class Product extends Model
         'image_url',
         'display_order',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'ingredients' => 'array',
+        'nutritional_info' => 'array',
+    ];
 }

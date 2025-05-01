@@ -27,9 +27,12 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration()
+            ->brandName('CoffeeArt Admin')
+            // ->brandLogo(asset('images/logo.png'))
             ->colors([
                 'primary' => Color::Indigo,
-                'grey' => Color::Slate,
+                'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -54,6 +57,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            // ->navigationGroups([
+            //     'Shop Management',
+            //     'Menu Management',
+            //     'Order Management',
+            //     'User Management',
+            // ]);
+        ;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enum\OrderStatus;
+use App\Enum\PaymentStatus;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
@@ -17,48 +19,74 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+
+    protected static ?string $navigationGroup = 'Order Management';
+
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $recordTitleAttribute = 'order_number';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name'),
-                Forms\Components\Select::make('branch_id')
-                    ->relationship('branch', 'name')
-                    ->required(),
-                Forms\Components\Select::make('table_id')
-                    ->relationship('table', 'id'),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('payment_status')
-                    ->required(),
-                Forms\Components\TextInput::make('payment_method'),
-                Forms\Components\TextInput::make('subtotal')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('tax')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('discount')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('total_amount')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('points_earned')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('points_redeemed')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\Textarea::make('special_instructions')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('completed_at'),
+                Forms\Components\Section::make('Order Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('order_number')
+                            ->required()
+                            ->maxLength(255)
+                            ->default(fn () => 'ORD-' . strtoupper(substr(md5(time()), 0, 8)))
+                            ->disabled()
+                            ->dehydrated(),
+                        Forms\Components\Select::make('user_id')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\Select::make('branch_id')
+                            ->relationship('branch', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\Select::make('table_id')
+                            ->relationship('table', 'table_number')
+                            ->searchable()
+                            ->preload()
+                            ->label('Table Number'),
+                        Forms\Components\DateTimePicker::make('ordered_at')
+                            ->required()
+                            ->default(now()),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Order Status')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->required()
+                            ->options(OrderStatus::class)
+                            ->default(OrderStatus::PENDING),
+                        Forms\Components\Select::make('payment_status')
+                            ->required()
+                            ->options(PaymentStatus::class)
+                            ->default(PaymentStatus::PENDING),
+                        Forms\Components\TextInput::make('total_amount')
+                            ->required()
+                            ->numeric()
+                            ->prefix('$')
+                            ->step(0.01)
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(),
+                    ])->columns(3),
+
+                Forms\Components\Section::make('Additional Information')
+                    ->schema([
+                        Forms\Components\Toggle::make('is_takeaway')
+                            ->required()
+                            ->default(false)
+                            ->label('Takeaway Order'),
+                        Forms\Components\Textarea::make('notes')
+                            ->maxLength(500),
+                    ])->columns(2),
             ]);
     }
 
@@ -66,53 +94,64 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('order_number')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                    ->label('Customer')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('branch.name')
-                    ->numeric()
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('table.id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('table.table_number')
+                    ->label('Table')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('payment_status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('payment_method')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('subtotal')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('tax')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('discount')
-                    ->numeric()
-                    ->sortable(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->numeric()
+                    ->money('USD')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('points_earned')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('points_redeemed')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('completed_at')
+                Tables\Columns\IconColumn::make('is_takeaway')
+                    ->boolean()
+                    ->label('Takeaway'),
+                Tables\Columns\TextColumn::make('ordered_at')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->options(OrderStatus::class),
+                Tables\Filters\SelectFilter::make('payment_status')
+                    ->options(PaymentStatus::class),
+                Tables\Filters\SelectFilter::make('branch_id')
+                    ->relationship('branch', 'name')
+                    ->label('Branch'),
+                Tables\Filters\TernaryFilter::make('is_takeaway')
+                    ->label('Takeaway Orders'),
+                Tables\Filters\Filter::make('ordered_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('ordered_from'),
+                        Forms\Components\DatePicker::make('ordered_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['ordered_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('ordered_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['ordered_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('ordered_at', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -127,7 +166,7 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // RelationManagers\OrderItemsRelationManager::class,
         ];
     }
 
