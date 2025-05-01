@@ -13,9 +13,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class OrderResource extends Resource
+final class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
@@ -36,7 +35,7 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('order_number')
                             ->required()
                             ->maxLength(255)
-                            ->default(fn () => 'ORD-' . strtoupper(substr(md5(time()), 0, 8)))
+                            ->default(fn () => 'ORD-' . mb_strtoupper(mb_substr(md5(time()), 0, 8)))
                             ->disabled()
                             ->dehydrated(),
                         Forms\Components\Select::make('user_id')
@@ -151,7 +150,7 @@ class OrderResource extends Resource
                                 $data['ordered_until'] ?? null,
                                 fn (Builder $query, $date): Builder => $query->whereDate('ordered_at', '<=', $date),
                             );
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

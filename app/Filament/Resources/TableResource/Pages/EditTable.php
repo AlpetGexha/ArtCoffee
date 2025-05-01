@@ -6,7 +6,7 @@ use App\Filament\Resources\TableResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditTable extends EditRecord
+final class EditTable extends EditRecord
 {
     protected static string $resource = TableResource::class;
 

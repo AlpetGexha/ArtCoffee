@@ -35,9 +35,9 @@
                 <h2 class="text-2xl font-semibold text-gray-900">Select Your Items</h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @forelse($products as $product)
+                    @forelse ($products as $product)
                         <div class="bg-white rounded-lg shadow overflow-hidden">
-                            @if($product->image_url)
+                            @if ($product->image_url)
                                 <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
                             @else
                                 <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
@@ -92,7 +92,7 @@
                 x-transition:leave-end="opacity-0 transform translate-y-4"
                 class="bg-white rounded-lg shadow-lg p-6"
             >
-                @if($currentProduct)
+                @if ($currentProduct)
                 <div>
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-semibold text-gray-900">Customize Your {{ $currentProduct->name }}</h2>
@@ -118,11 +118,11 @@
                                 ->groupBy('option_category');
                         @endphp
 
-                        @forelse($options as $category => $categoryOptions)
+                        @forelse ($options as $category => $categoryOptions)
                             <div class="bg-gray-50 p-4 rounded-lg">
                                 <h3 class="text-lg font-medium text-gray-900 mb-3">{{ ucfirst($category) }}</h3>
                                 <div class="grid grid-cols-2 gap-3">
-                                    @foreach($categoryOptions as $option)
+                                    @foreach ($categoryOptions as $option)
                                         <label class="flex items-center space-x-2 p-2 border rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
                                                :class="{'bg-amber-50 border-amber-500': $wire.customizations[{{ $currentProduct->id }}] && $wire.customizations[{{ $currentProduct->id }}]['{{ $category }}'] == {{ $option->id }}}"
                                         >
@@ -136,7 +136,7 @@
                                             >
                                             <div>
                                                 <span class="font-medium">{{ $option->option_name }}</span>
-                                                @if($option->additional_price > 0)
+                                                @if ($option->additional_price > 0)
                                                     <span class="text-sm text-amber-600 ml-1">+${{ number_format($option->additional_price, 2) }}</span>
                                                 @endif
                                             </div>
@@ -197,22 +197,22 @@
                     </button>
                 </div>
 
-                @if(count($cart) > 0)
+                @if (count($cart) > 0)
                     <div class="space-y-4 mb-6">
-                        @foreach($cart as $index => $item)
+                        @foreach ($cart as $index => $item)
                             <div class="flex items-center space-x-4 py-3 border-b">
                                 <div class="flex-1">
                                     <h4 class="font-medium text-gray-900">{{ $item['product_name'] }}</h4>
 
-                                    @if(!empty($item['customizations']))
+                                    @if (!empty($item['customizations']))
                                         <div class="text-sm text-gray-600 mt-1">
                                             <span class="font-medium">Customizations:</span>
                                             <ul class="ml-2">
-                                                @foreach($item['customizations'] as $category => $optionId)
+                                                @foreach ($item['customizations'] as $category => $optionId)
                                                     @php
                                                         $option = App\Models\ProductOption::find($optionId);
                                                     @endphp
-                                                    @if($option)
+                                                    @if ($option)
                                                         <li>{{ ucfirst($category) }}: {{ $option->option_name }}</li>
                                                     @endif
                                                 @endforeach
@@ -220,7 +220,7 @@
                                         </div>
                                     @endif
 
-                                    @if($item['special_instructions'])
+                                    @if ($item['special_instructions'])
                                         <div class="text-sm text-gray-600 mt-1">
                                             <span class="font-medium">Special Instructions:</span>
                                             <p class="ml-2">{{ $item['special_instructions'] }}</p>
@@ -364,7 +364,7 @@
                     </div>
 
                     <!-- Points Redemption -->
-                    @if(auth()->check() && auth()->user()->available_points > 0)
+                    @if (auth()->check() && auth()->user()->available_points > 0)
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h3 class="text-lg font-medium text-gray-900 mb-3">Redeem Points</h3>
                             <p class="text-gray-600 mb-2">You have {{ auth()->user()->available_points }} points available.</p>

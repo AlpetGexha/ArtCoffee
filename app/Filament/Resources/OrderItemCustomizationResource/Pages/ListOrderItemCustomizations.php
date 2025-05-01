@@ -6,7 +6,7 @@ use App\Filament\Resources\OrderItemCustomizationResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListOrderItemCustomizations extends ListRecords
+final class ListOrderItemCustomizations extends ListRecords
 {
     protected static string $resource = OrderItemCustomizationResource::class;
 

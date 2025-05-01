@@ -6,7 +6,7 @@ use App\Filament\Resources\ProductOptionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditProductOption extends EditRecord
+final class EditProductOption extends EditRecord
 {
     protected static string $resource = ProductOptionResource::class;
 

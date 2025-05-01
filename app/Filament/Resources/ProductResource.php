@@ -12,11 +12,9 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
-class ProductResource extends Resource
+final class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
@@ -65,8 +63,6 @@ class ProductResource extends Resource
                         //     ->directory('products')
                         //     ->columnSpanFull(),
 
-
-
                         Forms\Components\Repeater::make('ingredients')
                             ->schema([
                                 Forms\Components\TextInput::make('name')
@@ -111,7 +107,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('category')
                     ->sortable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         ProductCategory::COFFEE->value => 'warning',
                         ProductCategory::TEA->value => 'success',
                         ProductCategory::PASTRY->value => 'danger',
@@ -166,7 +162,7 @@ class ProductResource extends Resource
                         ->action(function (Collection $records): void {
                             foreach ($records as $record) {
                                 $record->update([
-                                    'is_available' => !$record->is_available
+                                    'is_available' => ! $record->is_available,
                                 ]);
                             }
                         }),

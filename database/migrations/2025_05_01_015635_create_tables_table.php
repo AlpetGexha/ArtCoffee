@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tables', function (Blueprint $table) {
@@ -21,7 +18,7 @@ return new class extends Migration
             $table->integer('seating_capacity');
             $table->string('location')->nullable(); // e.g., "outdoor", "indoor-window"
             $table->enum('status', array_column(TableStatus::cases(), 'value'))
-                  ->default(TableStatus::AVAILABLE->value);
+                ->default(TableStatus::AVAILABLE->value);
             $table->timestamps();
 
             // Ensure table numbers are unique within a branch
@@ -29,9 +26,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tables');

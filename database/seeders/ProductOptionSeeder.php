@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ProductOptionSeeder extends Seeder
+final class ProductOptionSeeder extends Seeder
 {
     /**
      * Run the database seeds.

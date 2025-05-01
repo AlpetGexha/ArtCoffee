@@ -6,7 +6,7 @@ use App\Filament\Resources\BranchResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListBranches extends ListRecords
+final class ListBranches extends ListRecords
 {
     protected static string $resource = BranchResource::class;
 

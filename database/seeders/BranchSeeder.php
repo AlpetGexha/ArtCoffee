@@ -6,7 +6,7 @@ use App\Models\Branch;
 use App\Models\Table;
 use Illuminate\Database\Seeder;
 
-class BranchSeeder extends Seeder
+final class BranchSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -44,7 +44,7 @@ class BranchSeeder extends Seeder
                     ['table_number' => 'T06', 'seating_capacity' => 2, 'location' => 'outdoor'],
                     ['table_number' => 'T07', 'seating_capacity' => 2, 'location' => 'outdoor'],
                     ['table_number' => 'T08', 'seating_capacity' => 4, 'location' => 'outdoor'],
-                ]
+                ],
             ],
             [
                 'name' => 'CoffeeArt Midtown',
@@ -74,7 +74,7 @@ class BranchSeeder extends Seeder
                     ['table_number' => 'T04', 'seating_capacity' => 8, 'location' => 'corner'],
                     ['table_number' => 'T05', 'seating_capacity' => 2, 'location' => 'bar'],
                     ['table_number' => 'T06', 'seating_capacity' => 2, 'location' => 'bar'],
-                ]
+                ],
             ],
             [
                 'name' => 'CoffeeArt Village',
@@ -107,7 +107,7 @@ class BranchSeeder extends Seeder
                     ['table_number' => 'T07', 'seating_capacity' => 2, 'location' => 'garden'],
                     ['table_number' => 'T08', 'seating_capacity' => 2, 'location' => 'garden'],
                     ['table_number' => 'T09', 'seating_capacity' => 4, 'location' => 'garden'],
-                ]
+                ],
             ],
         ];
 

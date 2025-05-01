@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
  */
-class ProductFactory extends Factory
+final class ProductFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -32,7 +32,7 @@ class ProductFactory extends Factory
             'Avocado Toast', 'Breakfast Sandwich', 'Fruit Bowl',
             'Granola Parfait', 'Cheese Plate',
             // Merchandise
-            'Coffee Beans', 'Ceramic Mug', 'Travel Tumbler', 'Pour-over Kit'
+            'Coffee Beans', 'Ceramic Mug', 'Travel Tumbler', 'Pour-over Kit',
         ]);
 
         $category = $this->determineCategory($name);
@@ -55,6 +55,63 @@ class ProductFactory extends Factory
     }
 
     /**
+     * Indicate that the product is a coffee item.
+     */
+    public function coffee(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'category' => ProductCategory::COFFEE,
+            'is_customizable' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the product is a tea item.
+     */
+    public function tea(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'category' => ProductCategory::TEA,
+            'is_customizable' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the product is a pastry item.
+     */
+    public function pastry(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'category' => ProductCategory::PASTRY,
+            'is_customizable' => false,
+        ]);
+    }
+
+    /**
+     * Indicate that the product is a snack item.
+     */
+    public function snack(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'category' => ProductCategory::SNACK,
+            'is_customizable' => false,
+        ]);
+    }
+
+    /**
+     * Indicate that the product is a merchandise item.
+     */
+    public function merchandise(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'category' => ProductCategory::MERCHANDISE,
+            'is_customizable' => false,
+            'ingredients' => null,
+            'nutritional_info' => null,
+        ]);
+    }
+
+    /**
      * Determine product category based on name.
      */
     protected function determineCategory(string $name): ProductCategory
@@ -66,15 +123,19 @@ class ProductFactory extends Factory
 
         if (in_array($name, $coffeeProducts)) {
             return ProductCategory::COFFEE;
-        } elseif (in_array($name, $teaProducts)) {
-            return ProductCategory::TEA;
-        } elseif (in_array($name, $pastryProducts)) {
-            return ProductCategory::PASTRY;
-        } elseif (in_array($name, $snackProducts)) {
-            return ProductCategory::SNACK;
-        } else {
-            return ProductCategory::MERCHANDISE;
         }
+        if (in_array($name, $teaProducts)) {
+            return ProductCategory::TEA;
+        }
+        if (in_array($name, $pastryProducts)) {
+            return ProductCategory::PASTRY;
+        }
+        if (in_array($name, $snackProducts)) {
+            return ProductCategory::SNACK;
+        }
+
+        return ProductCategory::MERCHANDISE;
+
     }
 
     /**
@@ -251,62 +312,5 @@ class ProductFactory extends Factory
                 'serving_size' => '1 portion',
             ]),
         };
-    }
-
-    /**
-     * Indicate that the product is a coffee item.
-     */
-    public function coffee(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'category' => ProductCategory::COFFEE,
-            'is_customizable' => true,
-        ]);
-    }
-
-    /**
-     * Indicate that the product is a tea item.
-     */
-    public function tea(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'category' => ProductCategory::TEA,
-            'is_customizable' => true,
-        ]);
-    }
-
-    /**
-     * Indicate that the product is a pastry item.
-     */
-    public function pastry(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'category' => ProductCategory::PASTRY,
-            'is_customizable' => false,
-        ]);
-    }
-
-    /**
-     * Indicate that the product is a snack item.
-     */
-    public function snack(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'category' => ProductCategory::SNACK,
-            'is_customizable' => false,
-        ]);
-    }
-
-    /**
-     * Indicate that the product is a merchandise item.
-     */
-    public function merchandise(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'category' => ProductCategory::MERCHANDISE,
-            'is_customizable' => false,
-            'ingredients' => null,
-            'nutritional_info' => null,
-        ]);
     }
 }

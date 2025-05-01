@@ -3,17 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductOptionResource\Pages;
-use App\Filament\Resources\ProductOptionResource\RelationManagers;
 use App\Models\ProductOption;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProductOptionResource extends Resource
+final class ProductOptionResource extends Resource
 {
     protected static ?string $model = ProductOption::class;
 

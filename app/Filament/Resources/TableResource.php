@@ -3,17 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TableResource\Pages;
-use App\Filament\Resources\TableResource\RelationManagers;
 use App\Models\Table as TableModel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class TableResource extends Resource
+final class TableResource extends Resource
 {
     protected static ?string $model = TableModel::class;
 

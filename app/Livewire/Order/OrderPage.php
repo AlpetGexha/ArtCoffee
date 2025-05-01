@@ -2,18 +2,18 @@
 
 namespace App\Livewire\Order;
 
+use App\Enum\OrderStatus;
+use App\Enum\PaymentStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderItemCustomization;
 use App\Models\Product;
 use App\Models\ProductOption;
-use App\Enum\OrderStatus;
-use App\Enum\PaymentStatus;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Livewire\Component;
-use Illuminate\Http\RedirectResponse;
 
-class OrderPage extends Component
+final class OrderPage extends Component
 {
     public array $cart = [];
     public array $customizations = [];
@@ -52,7 +52,7 @@ class OrderPage extends Component
 
     public function addToCart(): void
     {
-        if (!$this->currentProduct) {
+        if (! $this->currentProduct) {
             return;
         }
 
@@ -83,9 +83,9 @@ class OrderPage extends Component
         $found = false;
         foreach ($this->cart as $key => $item) {
             if (
-                $item['product_id'] == $productId &&
-                $item['customizations'] == $cartItem['customizations'] &&
-                $item['special_instructions'] == $cartItem['special_instructions']
+                $item['product_id'] === $productId &&
+                $item['customizations'] === $cartItem['customizations'] &&
+                $item['special_instructions'] === $cartItem['special_instructions']
             ) {
                 $this->cart[$key]['quantity']++;
                 $this->cart[$key]['total_price'] = $this->cart[$key]['quantity'] *
@@ -95,7 +95,7 @@ class OrderPage extends Component
             }
         }
 
-        if (!$found) {
+        if (! $found) {
             $this->cart[] = $cartItem;
         }
 
@@ -111,7 +111,7 @@ class OrderPage extends Component
     {
         $product = Product::find($productId);
 
-        if (!$product) {
+        if (! $product) {
             return;
         }
 
@@ -146,7 +146,7 @@ class OrderPage extends Component
 
     public function setCustomization($productId, $category, $optionId): void
     {
-        if (!isset($this->customizations[$productId])) {
+        if (! isset($this->customizations[$productId])) {
             $this->customizations[$productId] = [];
         }
 
@@ -164,6 +164,7 @@ class OrderPage extends Component
     {
         if (empty($this->cart)) {
             $this->addError('cart', 'Your cart is empty');
+
             return redirect()->back();
         }
 
@@ -176,8 +177,9 @@ class OrderPage extends Component
         // Get the default branch (adjust this based on your business logic)
         $defaultBranch = \App\Models\Branch::first();
 
-        if (!$defaultBranch) {
+        if (! $defaultBranch) {
             $this->addError('branch', 'No branch is available for processing orders');
+
             return redirect()->back();
         }
 
@@ -210,7 +212,7 @@ class OrderPage extends Component
             ]);
 
             // Create order item customizations
-            if (!empty($item['customizations'])) {
+            if (! empty($item['customizations'])) {
                 foreach ($item['customizations'] as $category => $optionId) {
                     OrderItemCustomization::create([
                         'order_item_id' => $orderItem->id,
@@ -235,6 +237,7 @@ class OrderPage extends Component
         foreach ($this->cart as $item) {
             $total += $item['total_price'];
         }
+
         return $total;
     }
 }

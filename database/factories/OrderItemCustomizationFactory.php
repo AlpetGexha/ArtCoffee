@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OrderItemCustomization>
  */
-class OrderItemCustomizationFactory extends Factory
+final class OrderItemCustomizationFactory extends Factory
 {
     /**
      * Define the model's default state.

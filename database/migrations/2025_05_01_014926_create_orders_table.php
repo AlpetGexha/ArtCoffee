@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
@@ -22,9 +19,9 @@ return new class extends Migration
             $table->foreignIdFor(Branch::class)->constrained()->restrictOnDelete();
             $table->foreignIdFor(Table::class)->nullable()->constrained()->nullOnDelete();
             $table->enum('status', array_column(OrderStatus::cases(), 'value'))
-                  ->default(OrderStatus::PENDING->value);
+                ->default(OrderStatus::PENDING->value);
             $table->enum('payment_status', array_column(PaymentStatus::cases(), 'value'))
-                  ->default(PaymentStatus::PENDING->value);
+                ->default(PaymentStatus::PENDING->value);
             $table->string('payment_method')->nullable();
             $table->decimal('subtotal', 10, 2);
             $table->decimal('tax', 10, 2);
@@ -44,9 +41,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('orders');

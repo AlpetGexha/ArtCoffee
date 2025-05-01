@@ -6,7 +6,7 @@ use App\Filament\Resources\TableResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListTables extends ListRecords
+final class ListTables extends ListRecords
 {
     protected static string $resource = TableResource::class;
 

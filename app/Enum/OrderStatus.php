@@ -2,8 +2,6 @@
 
 namespace App\Enum;
 
-use Filament\Support\Contracts\HasColor;
-
 enum OrderStatus: string
 {
     case PENDING = 'pending';

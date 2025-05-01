@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class OrderItemCustomizationSeeder extends Seeder
+final class OrderItemCustomizationSeeder extends Seeder
 {
     /**
      * Run the database seeds.

@@ -11,13 +11,12 @@ use App\Models\OrderItem;
 use App\Models\OrderItemCustomization;
 use App\Models\Product;
 use App\Models\ProductOption;
-use App\Models\Table;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
-class OrderSeeder extends Seeder
+final class OrderSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -51,8 +50,8 @@ class OrderSeeder extends Seeder
             $table = mt_rand(0, 100) < 70 ? $branch->tables->random() : null; // 70% chance of being dine-in
 
             // Determine time based on branch hours - handling edge cases
-            $openingHour = intval(substr($branch->opening_time, 0, 2));
-            $closingHour = intval(substr($branch->closing_time, 0, 2));
+            $openingHour = (int) (mb_substr($branch->opening_time, 0, 2));
+            $closingHour = (int) (mb_substr($branch->closing_time, 0, 2));
 
             // Ensure valid range for mt_rand by setting a minimum gap of 1
             $orderHour = ($openingHour >= $closingHour)
@@ -121,7 +120,7 @@ class OrderSeeder extends Seeder
                 ]);
 
                 // Create customizations if applicable
-                if ($product->is_customizable && !empty($item['options'])) {
+                if ($product->is_customizable && ! empty($item['options'])) {
                     foreach ($item['options'] as $optionId) {
                         $option = ProductOption::find($optionId);
                         if ($option) {
@@ -158,7 +157,7 @@ class OrderSeeder extends Seeder
                 ProductCategory::TEA->value;
 
             // Fall back to the other category if the chosen one doesn't exist
-            if (!$productsByCategory->has($drinkCategory)) {
+            if (! $productsByCategory->has($drinkCategory)) {
                 $drinkCategory = ($drinkCategory === ProductCategory::COFFEE->value) ?
                     ProductCategory::TEA->value :
                     ProductCategory::COFFEE->value;
@@ -181,7 +180,7 @@ class OrderSeeder extends Seeder
             $category = $categories->random();
 
             // Skip if no products in this category
-            if (!$productsByCategory->has($category)) {
+            if (! $productsByCategory->has($category)) {
                 continue;
             }
 
@@ -271,15 +270,16 @@ class OrderSeeder extends Seeder
 
         if ($daysAgo < 1) {
             // Today - fewer orders because day isn't complete
-            $baseCount = (int)($baseCount * (Carbon::now()->hour / 24));
-        } else if ($daysAgo < 2) {
+            $baseCount = (int) ($baseCount * (Carbon::now()->hour / 24));
+        } elseif ($daysAgo < 2) {
             // Yesterday - slightly fewer orders for randomization
-            $baseCount = (int)($baseCount * 0.9);
+            $baseCount = (int) ($baseCount * 0.9);
         }
 
         // Add randomness of +/- 20%
         $variance = mt_rand(-20, 20) / 100;
-        return max(5, intval($baseCount * (1 + $variance)));
+
+        return max(5, (int) ($baseCount * (1 + $variance)));
     }
 
     /**
@@ -290,21 +290,37 @@ class OrderSeeder extends Seeder
         if ($daysAgo === 0) {
             // Today's orders are more likely to be in progress
             $rand = mt_rand(1, 100);
-            if ($rand <= 30) return OrderStatus::PENDING;
-            if ($rand <= 60) return OrderStatus::PROCESSING;
-            if ($rand <= 80) return OrderStatus::READY;
+            if ($rand <= 30) {
+                return OrderStatus::PENDING;
+            }
+            if ($rand <= 60) {
+                return OrderStatus::PROCESSING;
+            }
+            if ($rand <= 80) {
+                return OrderStatus::READY;
+            }
+
             return OrderStatus::COMPLETED;
-        } else if ($daysAgo === 1) {
+        }
+        if ($daysAgo === 1) {
             // Yesterday's orders are mostly completed
             $rand = mt_rand(1, 100);
-            if ($rand <= 5) return OrderStatus::PROCESSING;
-            if ($rand <= 15) return OrderStatus::READY;
-            if ($rand <= 95) return OrderStatus::COMPLETED;
+            if ($rand <= 5) {
+                return OrderStatus::PROCESSING;
+            }
+            if ($rand <= 15) {
+                return OrderStatus::READY;
+            }
+            if ($rand <= 95) {
+                return OrderStatus::COMPLETED;
+            }
+
             return OrderStatus::CANCELLED;
-        } else {
-            // Older orders are completed or cancelled
-            return mt_rand(1, 100) <= 95 ? OrderStatus::COMPLETED : OrderStatus::CANCELLED;
         }
+
+        // Older orders are completed or cancelled
+        return mt_rand(1, 100) <= 95 ? OrderStatus::COMPLETED : OrderStatus::CANCELLED;
+
     }
 
     /**
@@ -368,7 +384,8 @@ class OrderSeeder extends Seeder
                 'Extra foam please.',
                 'Very little sugar.',
             ]);
-        } elseif ($product->category === ProductCategory::TEA) {
+        }
+        if ($product->category === ProductCategory::TEA) {
             return Arr::random([
                 'Light steep please.',
                 'Extra hot water on the side.',
@@ -393,7 +410,8 @@ class OrderSeeder extends Seeder
                 'Cut in half.',
                 'Butter on the side.',
             ]);
-        } elseif ($product->category === ProductCategory::SNACK) {
+        }
+        if ($product->category === ProductCategory::SNACK) {
             return Arr::random([
                 'No tomatoes please.',
                 'Extra sauce on the side.',

@@ -8,7 +8,7 @@ use App\Models\ProductOption;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
-class ProductSeeder extends Seeder
+final class ProductSeeder extends Seeder
 {
     /**
      * Run the database seeds.
