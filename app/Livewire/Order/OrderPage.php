@@ -4,6 +4,7 @@ namespace App\Livewire\Order;
 
 use App\Enum\OrderStatus;
 use App\Enum\PaymentStatus;
+use App\Livewire\Actions\Order\ProcessWalletPaymentAction;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderItemCustomization;
@@ -23,13 +24,26 @@ final class OrderPage extends Component
     public string $personalMessage = '';
     public string $redemptionType = 'in-store'; // 'in-store' or 'online'
     public int $pointsToRedeem = 0;
+    public string $paymentMethod = 'cash'; // 'cash', 'card', 'wallet'
+    public bool $insufficientBalance = false;
 
+    /**
+     * Mount the component.
+     */
     public function mount(): void
     {
         // Initialize the cart
         $this->resetCustomization();
+
+        // Set default payment method to wallet if user is logged in
+        if (auth()->check()) {
+            $this->paymentMethod = 'wallet';
+        }
     }
 
+    /**
+     * Render the component.
+     */
     public function render(): View
     {
         $products = Product::where('is_available', true)
@@ -37,10 +51,21 @@ final class OrderPage extends Component
             ->get();
 
         $cartTotal = $this->calculateCartTotal();
+        $subtotal = $cartTotal;
+        $tax = $subtotal * 0.10; // Assuming 10% tax
+        $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
+        $totalAmount = $subtotal + $tax - $discount;
+
+        // Get user wallet balance if authenticated
+        $walletBalance = auth()->check() ? auth()->user()->balanceFloat : 0;
+        $hasEnoughBalance = $walletBalance >= $totalAmount;
 
         return view('livewire.order.order-page', [
             'products' => $products,
             'cartTotal' => $cartTotal,
+            'walletBalance' => $walletBalance,
+            'hasEnoughBalance' => $hasEnoughBalance,
+            'totalAmount' => $totalAmount,
         ]);
     }
 
@@ -160,11 +185,31 @@ final class OrderPage extends Component
         $this->specialInstructions = '';
     }
 
+    /**
+     * Update payment method and validate wallet balance if selected.
+     */
+    public function updatedPaymentMethod(): void
+    {
+        if ($this->paymentMethod === 'wallet') {
+            $this->validateWalletBalance();
+        } else {
+            $this->insufficientBalance = false;
+        }
+    }
+
+    /**
+     * Place an order with selected payment method.
+     */
     public function placeOrder(): RedirectResponse
     {
         if (empty($this->cart)) {
             $this->addError('cart', 'Your cart is empty');
 
+            return redirect()->back();
+        }
+
+        // Validate wallet balance if wallet payment is selected
+        if ($this->paymentMethod === 'wallet' && ! $this->validateWalletBalance()) {
             return redirect()->back();
         }
 
@@ -188,8 +233,8 @@ final class OrderPage extends Component
             'user_id' => auth()->id() ?? null, // Optional: if user is logged in
             'branch_id' => $defaultBranch->id, // Add the required branch_id field
             'status' => OrderStatus::PENDING,
-            'payment_status' => PaymentStatus::PENDING,
-            'payment_method' => 'cash', // Default, can be changed
+            'payment_status' => $this->paymentMethod === 'wallet' ? PaymentStatus::PAID : PaymentStatus::PENDING,
+            'payment_method' => $this->paymentMethod,
             'subtotal' => $subtotal,
             'tax' => $tax,
             'discount' => $discount,
@@ -222,13 +267,61 @@ final class OrderPage extends Component
             }
         }
 
+        // Process wallet payment if selected
+        if ($this->paymentMethod === 'wallet' && auth()->check()) {
+            app(ProcessWalletPaymentAction::class)->handle(
+                user: auth()->user(),
+                order: $order,
+                amount: $totalAmount
+            );
+        }
+
         // Reset cart and redirect
         $this->cart = [];
         $this->personalMessage = '';
         $this->pointsToRedeem = 0;
+        $this->paymentMethod = auth()->check() ? 'wallet' : 'cash';
 
         // Redirect to order confirmation
         return redirect()->route('order.confirmation', ['order' => $order->id]);
+    }
+
+    /**
+     * Validate if user has enough wallet balance for the current order.
+     */
+    private function validateWalletBalance(): bool
+    {
+        if (! auth()->check()) {
+            $this->addError('payment', 'Please log in to use wallet payment');
+
+            return false;
+        }
+
+        $totalAmount = $this->calculateOrderTotal();
+        $walletBalance = auth()->user()->balanceFloat;
+
+        if ($walletBalance < $totalAmount) {
+            $this->insufficientBalance = true;
+            $this->addError('payment', 'Insufficient wallet balance');
+
+            return false;
+        }
+
+        $this->insufficientBalance = false;
+
+        return true;
+    }
+
+    /**
+     * Calculate the total order amount including tax and discounts.
+     */
+    private function calculateOrderTotal(): float
+    {
+        $subtotal = $this->calculateCartTotal();
+        $tax = $subtotal * 0.10; // Assuming 10% tax
+        $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
+
+        return $subtotal + $tax - $discount;
     }
 
     private function calculateCartTotal(): float
