@@ -34,4 +34,12 @@ final class Product extends Model
         'ingredients' => 'array',
         'nutritional_info' => 'array',
     ];
+
+    public function menus()
+{
+    return $this->belongsToMany(Menu::class)
+        ->withPivot(['custom_price', 'discount_price'])
+        ->withTimestamps();
+}
+
 }
