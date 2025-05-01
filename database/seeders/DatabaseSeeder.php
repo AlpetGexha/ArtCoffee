@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\GiftCard;
+use Database\Factories\GiftCardFactory;
 use Illuminate\Database\Seeder;
 
 final class DatabaseSeeder extends Seeder
@@ -17,5 +19,7 @@ final class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             OrderSeeder::class,
         ]);
+
+        GiftCard::factory(20)->create();
     }
 }

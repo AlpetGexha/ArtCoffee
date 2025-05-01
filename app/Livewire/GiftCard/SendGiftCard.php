@@ -49,7 +49,6 @@ final class SendGiftCard extends Component
      */
     public function send(): void
     {
-        // Validate user is authenticated
         if (!auth()->check()) {
             $this->redirect(route('login'));
             return;
@@ -96,7 +95,7 @@ final class SendGiftCard extends Component
         $this->showSuccessMessage = true;
 
         // Send email notification to recipient using our Action class
-        app(SendGiftCardNotificationAction::class)->handle($giftCard);
+        // app(SendGiftCardNotificationAction::class)->handle($giftCard);
 
         // Reset form
         $this->reset(['amount', 'recipientEmail', 'message', 'occasion']);
