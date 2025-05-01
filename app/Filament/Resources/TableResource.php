@@ -67,7 +67,7 @@ final class TableResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -88,7 +88,7 @@ final class TableResource extends Resource
         return [
             'index' => Pages\ListTables::route('/'),
             'create' => Pages\CreateTable::route('/create'),
-            'edit' => Pages\EditTable::route('/{record}/edit'),
+            // 'edit' => Pages\EditTable::route('/{record}/edit'),
         ];
     }
 }

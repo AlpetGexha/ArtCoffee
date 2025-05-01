@@ -1,36 +1,41 @@
 @component('mail::message')
-# You've Received a Gift Card!
+# You've Received a Coffee Art Shop Gift Card!
 
-{{ $senderName }} has sent you a gift card worth **{{ $amount }}**.
+<div style="text-align: center; margin-bottom: 30px;">
+    <img src="{{ asset('images/gift-card.png') }}" alt="Gift Card" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+</div>
 
-@if ($message)
-## Personal Message
-"{{ $message }}"
+## Hello there!
+
+**{{ $senderName }}** has sent you a gift card worth **{{ $amount }}**!
+
+@if(!empty($message))
+## Personal Message:
+> "{{ $message }}"
 @endif
-
-Your gift card is ready to be redeemed at Coffe Art Shop. This gift card is valid until {{ $expirationDate }}.
 
 @component('mail::panel')
 ## Gift Card Details
-**Amount:** {{ $amount }}
-**Expiration:** {{ $expirationDate }}
-**Activation Code:** {{ $giftCard->activation_key }}
+- **Amount:** {{ $amount }}
+- **Occasion:** {{ $giftCard->occasion ?? 'Gift' }}
+- **Expires On:** {{ $expirationDate }}
 @endcomponent
+
+You can redeem this gift card at any Coffee Art Shop location or online. To redeem online, click the button below.
 
 @component('mail::button', ['url' => $redeemUrl, 'color' => 'success'])
-Redeem Now
+Redeem Your Gift Card Now
 @endcomponent
 
-## How to Redeem
-1. Create an account or log in at [CoffeArtShop.com]({{ route('home') }})
-2. Go to the "Redeem Gift Card" page
-3. Enter your activation code
-4. The gift card amount will be added to your account balance
+## How to redeem in-store
+Show the QR code below to the barista when ordering:
 
-You can use your balance to purchase any of our delicious coffee or artisanal food items.
+<div style="text-align: center; margin: 25px 0;">
+    <img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={{ urlencode($redeemUrl) }}" alt="QR Code" style="max-width: 200px;">
+</div>
 
-Thanks,<br>
+Thank you for being part of the Coffee Art Shop experience!
+
+Warmest Regards,<br>
 {{ config('app.name') }} Team
-
-<small>This gift card is subject to our terms and conditions. It cannot be exchanged for cash and is valid for a single use only.</small>
 @endcomponent

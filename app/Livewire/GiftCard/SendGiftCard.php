@@ -2,6 +2,7 @@
 
 namespace App\Livewire\GiftCard;
 
+use App\Jobs\SendGiftCardEmailJob;
 use App\Livewire\Actions\GiftCard\SendGiftCardNotificationAction;
 use App\Models\GiftCard;
 use App\Models\User;
@@ -96,8 +97,8 @@ final class SendGiftCard extends Component
         $this->createdGiftCard = $giftCard;
         $this->showSuccessMessage = true;
 
-        // Send email notification to recipient using our Action class
-        // app(SendGiftCardNotificationAction::class)->handle($giftCard);
+        // Dispatch the job to send the email notification
+        SendGiftCardEmailJob::dispatch($giftCard);
 
         // Reset form
         $this->reset(['amount', 'recipientEmail', 'message', 'occasion']);
