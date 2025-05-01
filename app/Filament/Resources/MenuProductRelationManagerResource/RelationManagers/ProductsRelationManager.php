@@ -11,7 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
 
-class ProductsRelationManager extends RelationManager
+final class ProductsRelationManager extends RelationManager
 {
     protected static string $relationship = 'products';
 
@@ -43,28 +43,27 @@ class ProductsRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                ->form([
-                    Forms\Components\TextInput::make('menus')
-                    ->required(),
-                    Forms\Components\TextInput::make('products')
-                        ->label('Products')
-                        ->required(),
+                    ->form([
+                        TextInput::make('menus')
+                            ->required(),
+                        TextInput::make('products')
+                            ->label('Products')
+                            ->required(),
 
+                        Forms\Components\Select::make('product_id')
+                            ->label('Product')
+                            ->options(Product::query()->pluck('name', 'id'))
+                            ->required(),
 
-                    Forms\Components\Select::make('product_id')
-                        ->label('Product')
-                        ->options(Product::query()->pluck('name', 'id'))
-                        ->required(),
-            
-                    Forms\Components\TextInput::make('pivot.custom_price')
-                        ->numeric()
-                        ->nullable(),
-            
-                    Forms\Components\TextInput::make('pivot.discount_price')
-                        ->numeric()
-                        ->nullable(),
-                ])
-                ->preloadRecordSelect(),
+                        TextInput::make('pivot.custom_price')
+                            ->numeric()
+                            ->nullable(),
+
+                        TextInput::make('pivot.discount_price')
+                            ->numeric()
+                            ->nullable(),
+                    ])
+                    ->preloadRecordSelect(),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),

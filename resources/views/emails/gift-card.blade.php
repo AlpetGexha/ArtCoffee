@@ -12,7 +12,7 @@
     <span><strong>{{ $senderName }}</strong> has sent you a gift card worth <strong>{{ $amount }}</strong>!</span>
 </div>
 
-@if(!empty($message))
+@if (!empty($message))
 ## Personal Message:
 <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #007bff;">
     <span style="font-size: 20px; margin-right: 10px;">💌</span>

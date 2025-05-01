@@ -6,7 +6,7 @@
             this.refreshInterval = setInterval(() => {
                 @this.refresh();
             }, 15000);
-            
+
             // Clean up interval when component is destroyed
             this.$on('beforeUnload', () => clearInterval(this.refreshInterval));
         }
@@ -19,7 +19,7 @@
         </div>
 
         <!-- Authentication check -->
-        @if(!auth()->check() && !$currentOrder)
+        @if (!auth()->check() && !$currentOrder)
             <div class="bg-white shadow rounded-lg p-6 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -36,15 +36,15 @@
             <!-- Mobile tab navigation for switching between current order and all orders -->
             <div class="sm:hidden mb-6">
                 <div class="flex space-x-2 bg-white rounded-lg shadow p-1">
-                    <button 
+                    <button
                         x-data
                         @click="$wire.orderId = null; $wire.loadCurrentOrder()"
                         class="flex-1 text-center py-2 px-4 text-sm font-medium rounded-md {{ !$orderId ? 'bg-amber-50 text-amber-800' : 'text-gray-700 hover:bg-gray-100' }}"
                     >
                         All Orders
                     </button>
-                    @if($currentOrder)
-                        <button 
+                    @if ($currentOrder)
+                        <button
                             class="flex-1 text-center py-2 px-4 text-sm font-medium rounded-md {{ $orderId ? 'bg-amber-50 text-amber-800' : 'text-gray-700 hover:bg-gray-100' }}"
                         >
                             Order #{{ $currentOrder->id }}
@@ -63,10 +63,10 @@
                                 Your current in-progress orders
                             </p>
                         </div>
-                        
-                        @forelse($this->inProgressOrders as $order)
-                            <a 
-                                href="{{ route('orders.track', $order->id) }}" 
+
+                        @forelse ($this->inProgressOrders as $order)
+                            <a
+                                href="{{ route('orders.track', $order->id) }}"
                                 class="block border-b border-gray-200 hover:bg-gray-50 transition-colors {{ $order->id === $orderId ? 'bg-amber-50' : '' }}"
                             >
                                 <div class="p-4">
@@ -86,7 +86,7 @@
                                             {{ ucfirst($order->status->value) }}
                                         </span>
                                     </div>
-                                    
+
                                     <div class="mt-2 text-xs text-gray-600">
                                         {{ $order->items->count() }} {{ Str::plural('item', $order->items->count()) }}
                                     </div>
@@ -124,7 +124,7 @@
                 </div>
 
                 <!-- Current order tracking (main content) -->
-                @if($currentOrder)
+                @if ($currentOrder)
                     <div class="md:col-span-2">
                         <div class="bg-white shadow rounded-lg overflow-hidden">
                             <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200">
@@ -155,17 +155,17 @@
                             <!-- Order Progress Tracker -->
                             <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
                                 <h4 class="text-base font-medium text-gray-900 mb-3">Order Progress</h4>
-                                
+
                                 <!-- Progress Bar -->
                                 <div class="w-full bg-gray-200 rounded-full h-3 mb-6">
                                     <div class="bg-amber-500 h-3 rounded-full transition-all duration-700 ease-in-out" style="width: {{ $this->getOrderProgressPercentage() }}%"></div>
                                 </div>
-                                
+
                                 <!-- Progress Steps -->
                                 <div class="relative">
                                     <!-- Progress Timeline -->
                                     <div class="hidden sm:block w-full h-0.5 bg-gray-200 absolute top-5 left-0 z-0"></div>
-                                    
+
                                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                                         <!-- Order Received -->
                                         <div class="relative flex flex-col items-center">
@@ -180,12 +180,12 @@
                                                 <p class="text-xs text-gray-500 mt-1">{{ $currentOrder->created_at->format('g:i A') }}</p>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- In Preparation -->
                                         <div class="relative flex flex-col items-center">
                                             <div class="rounded-full h-10 w-10 flex items-center justify-center z-10
                                                 {{ in_array($currentOrder->status->value, ['processing', 'ready', 'completed']) ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500' }}">
-                                                @if(in_array($currentOrder->status->value, ['processing', 'ready', 'completed']))
+                                                @if (in_array($currentOrder->status->value, ['processing', 'ready', 'completed']))
                                                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                     </svg>
@@ -198,18 +198,18 @@
                                             <div class="text-center mt-2">
                                                 <h5 class="text-sm font-medium text-gray-900">In Preparation</h5>
                                                 <p class="text-xs text-gray-500 mt-1">
-                                                    @if($currentOrder->status->value === 'pending')
+                                                    @if ($currentOrder->status->value === 'pending')
                                                         Estimated
                                                     @endif
                                                 </p>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Ready for Pickup -->
                                         <div class="relative flex flex-col items-center">
                                             <div class="rounded-full h-10 w-10 flex items-center justify-center z-10
                                                 {{ in_array($currentOrder->status->value, ['ready', 'completed']) ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500' }}">
-                                                @if(in_array($currentOrder->status->value, ['ready', 'completed']))
+                                                @if (in_array($currentOrder->status->value, ['ready', 'completed']))
                                                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                     </svg>
@@ -222,20 +222,20 @@
                                             <div class="text-center mt-2">
                                                 <h5 class="text-sm font-medium text-gray-900">Ready for Pickup</h5>
                                                 <p class="text-xs text-gray-500 mt-1">
-                                                    @if($currentOrder->status->value === 'ready')
+                                                    @if ($currentOrder->status->value === 'ready')
                                                         Now
-                                                    @elseif(!in_array($currentOrder->status->value, ['completed', 'cancelled']))
+                                                    @elseif (!in_array($currentOrder->status->value, ['completed', 'cancelled']))
                                                         {{ $this->getEstimatedReadyTime() }}
                                                     @endif
                                                 </p>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Completed -->
                                         <div class="relative flex flex-col items-center">
                                             <div class="rounded-full h-10 w-10 flex items-center justify-center z-10
                                                 {{ $currentOrder->status->value === 'completed' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500' }}">
-                                                @if($currentOrder->status->value === 'completed')
+                                                @if ($currentOrder->status->value === 'completed')
                                                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                     </svg>
@@ -248,7 +248,7 @@
                                             <div class="text-center mt-2">
                                                 <h5 class="text-sm font-medium text-gray-900">Completed</h5>
                                                 <p class="text-xs text-gray-500 mt-1">
-                                                    @if($currentOrder->status->value === 'completed')
+                                                    @if ($currentOrder->status->value === 'completed')
                                                         {{ $currentOrder->completed_at?->format('g:i A') ?? 'Done' }}
                                                     @endif
                                                 </p>
@@ -256,10 +256,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                @if($currentOrder->status->value === 'ready')
+
+                                @if ($currentOrder->status->value === 'ready')
                                     <div class="mt-8 flex justify-center">
-                                        <button 
+                                        <button
                                             wire:click="confirmPickup"
                                             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700"
                                         >
@@ -272,7 +272,7 @@
                             <!-- Order Details -->
                             <div class="px-4 py-5 sm:px-6">
                                 <h4 class="text-base font-medium text-gray-900 mb-4">Order Details</h4>
-                                
+
                                 <!-- Pickup Location -->
                                 <div class="border border-gray-200 rounded-md p-4 mb-6 bg-gray-50">
                                     <h5 class="text-sm font-medium text-gray-700 mb-2">Pickup Location</h5>
@@ -281,28 +281,28 @@
                                         {{ $currentOrder->branch->address }}
                                     </p>
                                 </div>
-                                
+
                                 <!-- Order Items -->
                                 <div class="space-y-4">
-                                    @foreach($currentOrder->items as $item)
+                                    @foreach ($currentOrder->items as $item)
                                         <div class="border-b border-gray-200 pb-4">
                                             <div class="flex justify-between">
                                                 <div class="flex-1">
                                                     <h5 class="text-sm font-medium text-gray-900">{{ $item->product->name }}</h5>
                                                     <p class="text-sm text-gray-500">Qty: {{ $item->quantity }}</p>
-                                                    
-                                                    @if($item->customizations->isNotEmpty())
+
+                                                    @if ($item->customizations->isNotEmpty())
                                                         <div class="mt-2">
                                                             <h6 class="text-xs font-medium text-gray-700">Customizations:</h6>
                                                             <ul class="mt-1 text-xs text-gray-500 space-y-1">
-                                                                @foreach($item->customizations as $customization)
+                                                                @foreach ($item->customizations as $customization)
                                                                     <li>• {{ $customization->productOption->name }}</li>
                                                                 @endforeach
                                                             </ul>
                                                         </div>
                                                     @endif
-                                                    
-                                                    @if($item->special_instructions)
+
+                                                    @if ($item->special_instructions)
                                                         <div class="mt-2 text-xs italic text-gray-500">
                                                             "{{ $item->special_instructions }}"
                                                         </div>
@@ -315,7 +315,7 @@
                                         </div>
                                     @endforeach
                                 </div>
-                                
+
                                 <!-- Order Summary -->
                                 <div class="mt-6 pt-4 border-t border-gray-200">
                                     <div class="flex justify-between text-sm">
@@ -326,7 +326,7 @@
                                         <span class="text-gray-600">Tax</span>
                                         <span class="text-gray-900">${{ number_format($currentOrder->tax, 2) }}</span>
                                     </div>
-                                    @if($currentOrder->discount > 0)
+                                    @if ($currentOrder->discount > 0)
                                         <div class="flex justify-between text-sm mt-2">
                                             <span class="text-gray-600">Discount</span>
                                             <span class="text-green-600">-${{ number_format($currentOrder->discount, 2) }}</span>
@@ -340,22 +340,22 @@
                                         Paid via <span class="font-medium capitalize">{{ $currentOrder->payment_method }}</span>
                                     </div>
                                 </div>
-                                
-                                @if($currentOrder->special_instructions)
+
+                                @if ($currentOrder->special_instructions)
                                     <div class="mt-6 pt-4 border-t border-gray-200">
                                         <h5 class="text-sm font-medium text-gray-700 mb-2">Special Instructions</h5>
                                         <p class="text-sm text-gray-600 italic">"{{ $currentOrder->special_instructions }}"</p>
                                     </div>
                                 @endif
                             </div>
-                            
+
                             <!-- Footer actions -->
                             <div class="bg-gray-50 px-4 py-4 sm:px-6 flex justify-between items-center">
                                 <div class="flex items-center text-sm text-gray-500">
                                     <span>Auto-refresh every 15s</span>
                                 </div>
-                                <button 
-                                    wire:click="refresh" 
+                                <button
+                                    wire:click="refresh"
                                     class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
                                 >
                                     <svg class="h-3.5 w-3.5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -366,7 +366,7 @@
                             </div>
                         </div>
                     </div>
-                @elseif($this->inProgressOrders->isEmpty())
+                @elseif ($this->inProgressOrders->isEmpty())
                     <div class="md:col-span-2">
                         <div class="bg-white shadow rounded-lg p-6 text-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

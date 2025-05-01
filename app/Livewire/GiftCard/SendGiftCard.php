@@ -3,7 +3,6 @@
 namespace App\Livewire\GiftCard;
 
 use App\Jobs\SendGiftCardEmailJob;
-use App\Livewire\Actions\GiftCard\SendGiftCardNotificationAction;
 use App\Models\GiftCard;
 use App\Models\User;
 use Illuminate\Validation\Rules\Email;
@@ -63,6 +62,7 @@ final class SendGiftCard extends Component
         // Prevent users from sending gift cards to themselves
         if ($user->email === $this->recipientEmail) {
             $this->addError('recipientEmail', 'You cannot send a gift card to yourself.');
+
             return;
         }
 

@@ -7,8 +7,8 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Livewire\Attributes\Url;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 final class RedeemGiftCard extends Component
@@ -61,6 +61,7 @@ final class RedeemGiftCard extends Component
         // Validate user is authenticated
         if (! auth()->check()) {
             $this->redirect(route('login'));
+
             return;
         }
 
@@ -78,7 +79,7 @@ final class RedeemGiftCard extends Component
             $user = auth()->user();
 
             // Check if the user is the intended recipient when is_for_anyone is false
-            if (!$giftCard->is_for_anyone && $giftCard->recipient_email !== $user->email) {
+            if (! $giftCard->is_for_anyone && $giftCard->recipient_email !== $user->email) {
                 throw new Exception('This gift card was sent specifically to ' . $giftCard->recipient_email . ' and cannot be redeemed by your account.');
             }
 

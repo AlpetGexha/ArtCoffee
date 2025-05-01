@@ -12,7 +12,7 @@
 
     <p>All of us at {{ $appName }} wish you a fantastic birthday filled with joy, laughter, and of course, great coffee!</p>
 
-    @if(!empty($specialOffer))
+    @if (!empty($specialOffer))
     <div style="display: flex; align-items: center; margin-top: 15px;">
         <span style="font-size: 24px; margin-right: 10px;">✨</span>
         <span style="font-weight: bold; color: #92400e;">{{ $specialOffer }}</span>

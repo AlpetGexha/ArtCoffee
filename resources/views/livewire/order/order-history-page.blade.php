@@ -6,7 +6,7 @@
             <p class="mt-2 text-sm text-gray-600">View all your past orders</p>
         </div>
 
-        @if(!auth()->check())
+        @if (!auth()->check())
             <!-- Not logged in state -->
             <div class="bg-white shadow rounded-lg p-6 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,7 +132,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($orders as $order)
+                            @forelse ($orders as $order)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">#{{ $order->id }}</div>
@@ -146,10 +146,10 @@
                                             {{ $order->items->count() }} {{ Str::plural('item', $order->items->count()) }}
                                         </div>
                                         <div class="text-xs text-gray-500 truncate max-w-xs">
-                                            @foreach($order->items->take(2) as $item)
+                                            @foreach ($order->items->take(2) as $item)
                                                 {{ $item->product->name }}{{ !$loop->last ? ', ' : '' }}
                                             @endforeach
-                                            @if($order->items->count() > 2)
+                                            @if ($order->items->count() > 2)
                                                 <span>+ {{ $order->items->count() - 2 }} more</span>
                                             @endif
                                         </div>

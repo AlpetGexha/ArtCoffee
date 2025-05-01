@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Jobs\SendBirthdayWishesJob;
 use App\Models\User;
+use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 final class SendBirthdayWishesCommand extends Command
@@ -40,13 +40,14 @@ final class SendBirthdayWishesCommand extends Command
                 ->whereMonth('date_of_birth', $today->month)
                 ->whereDay('date_of_birth', $today->day)
                 ->whereNotNull('email_verified_at');
-                // dd($query->toRawSql());
+            // dd($query->toRawSql());
 
             $totalUsers = $query->count();
             $this->info("Found {$totalUsers} users with birthdays today");
 
             if ($totalUsers === 0) {
                 $this->info('No birthdays today. Exiting.');
+
                 return self::SUCCESS;
             }
 
@@ -61,11 +62,11 @@ final class SendBirthdayWishesCommand extends Command
             Log::info("Birthday wishes scheduled for {$totalUsers} users");
 
             return self::SUCCESS;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error("Error processing birthday wishes: {$e->getMessage()}");
-            Log::error("Birthday wishes command failed", [
+            Log::error('Birthday wishes command failed', [
                 'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return self::FAILURE;

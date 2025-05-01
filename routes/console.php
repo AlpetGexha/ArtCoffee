@@ -26,5 +26,3 @@ Schedule::command('app:send-birthday-wishes')
     ->withoutOverlapping()
     ->runInBackground()
     ->appendOutputTo(storage_path('logs/birthday-wishes.log'));
-
-

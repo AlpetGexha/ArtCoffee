@@ -4,7 +4,7 @@ namespace App\Livewire\Actions\Order;
 
 use App\Models\Order;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -13,16 +13,16 @@ final class ProcessWalletPaymentAction
     /**
      * Process a wallet payment for an order.
      *
-     * @param User $user The user making the payment
-     * @param Order $order The order being paid for
-     * @param float $amount The amount to charge
+     * @param  User  $user  The user making the payment
+     * @param  Order  $order  The order being paid for
+     * @param  float  $amount  The amount to charge
      * @return bool Whether the payment was successful
      */
     public function handle(User $user, Order $order, float $amount): bool
     {
         // Check if user has enough balance
         if ($user->balanceFloat < $amount) {
-            Log::warning("Wallet payment failed: Insufficient funds", [
+            Log::warning('Wallet payment failed: Insufficient funds', [
                 'user_id' => $user->id,
                 'order_id' => $order->id,
                 'amount' => $amount,
@@ -48,7 +48,7 @@ final class ProcessWalletPaymentAction
                     'payment_processed_at' => now(),
                 ]);
 
-                Log::info("Wallet payment successful", [
+                Log::info('Wallet payment successful', [
                     'user_id' => $user->id,
                     'order_id' => $order->id,
                     'amount' => $amount,
@@ -57,7 +57,7 @@ final class ProcessWalletPaymentAction
 
                 return true;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error("Wallet payment failed: {$e->getMessage()}", [
                 'user_id' => $user->id,
                 'order_id' => $order->id,

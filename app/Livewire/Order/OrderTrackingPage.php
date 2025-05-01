@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Order;
 
-use Livewire\Component;
-use App\Models\Order;
 use App\Enum\OrderStatus;
-use Livewire\Attributes\Url;
+use App\Models\Order;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\Url;
+use Livewire\Component;
 
-class OrderTrackingPage extends Component
+final class OrderTrackingPage extends Component
 {
     #[Url]
     public ?string $orderId = null;
@@ -26,23 +26,23 @@ class OrderTrackingPage extends Component
         if ($this->orderId) {
             // Load the specific order being tracked
             $this->currentOrder = Order::with([
-                'items.product', 
-                'items.customizations.productOption', 
-                'branch'
+                'items.product',
+                'items.customizations.productOption',
+                'branch',
             ])->find($this->orderId);
 
             // If order not found or not accessible to this user, reset
-            if (!$this->currentOrder || 
-                (!auth()->check() && !session()->has('guest_order_' . $this->orderId))) {
+            if (! $this->currentOrder ||
+                (! auth()->check() && ! session()->has('guest_order_' . $this->orderId))) {
                 $this->currentOrder = null;
             }
         } elseif (auth()->check()) {
             // Load the most recent in-progress order for authenticated user
             $this->currentOrder = auth()->user()->orders()
                 ->with([
-                    'items.product', 
-                    'items.customizations.productOption', 
-                    'branch'
+                    'items.product',
+                    'items.customizations.productOption',
+                    'branch',
                 ])
                 ->inProgress()
                 ->latest()
@@ -63,16 +63,16 @@ class OrderTrackingPage extends Component
         if ($this->currentOrder && $this->currentOrder->status === OrderStatus::READY) {
             $this->currentOrder->update([
                 'status' => OrderStatus::COMPLETED,
-                'completed_at' => now()
+                'completed_at' => now(),
             ]);
-            
+
             $this->refresh();
         }
     }
 
     public function getOrderProgressPercentage()
     {
-        if (!$this->currentOrder) {
+        if (! $this->currentOrder) {
             return 0;
         }
 
@@ -88,7 +88,7 @@ class OrderTrackingPage extends Component
 
     public function getEstimatedReadyTime()
     {
-        if (!$this->currentOrder) {
+        if (! $this->currentOrder) {
             return 'Unknown';
         }
 
@@ -99,31 +99,31 @@ class OrderTrackingPage extends Component
         // Add time based on number of items
         $itemCount = $this->currentOrder->items->sum('quantity');
         $additionalMinutes = min(20, $itemCount * 3); // Cap at 20 minutes additional
-        
+
         // Calculate total time in minutes
         $totalMinutes = $baseMinutes + $additionalMinutes;
-        
+
         // Calculate estimated ready time
         $estimatedReadyTime = Carbon::parse($this->currentOrder->created_at)
             ->addMinutes($totalMinutes);
-            
+
         // If already past the estimated time, show "Soon"
         if ($estimatedReadyTime->isPast()) {
             return 'Soon';
         }
-        
+
         // If less than an hour from now, show "X mins"
         if ($estimatedReadyTime->diffInHours(now()) < 1) {
             return $estimatedReadyTime->diffInMinutes(now()) . ' mins';
         }
-        
+
         // Otherwise show the time
         return $estimatedReadyTime->format('g:i A');
     }
 
     public function getInProgressOrdersProperty()
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return collect();
         }
 

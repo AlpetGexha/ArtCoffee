@@ -2,11 +2,12 @@
 
 namespace App\Actions\GiftCard;
 
+use App\Mail\GiftCardMail;
 use App\Models\GiftCard;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\GiftCardMail;
 
 final class SendGiftCardNotificationAction implements ShouldQueue
 {
@@ -26,7 +27,7 @@ final class SendGiftCardNotificationAction implements ShouldQueue
                 ->send(new GiftCardMail($giftCard));
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             report($e);
 
             return false;

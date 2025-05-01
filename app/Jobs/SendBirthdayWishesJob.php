@@ -4,16 +4,17 @@ namespace App\Jobs;
 
 use App\Mail\BirthdayWishesMail;
 use App\Models\User;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
-final class SendBirthdayWishesJob implements ShouldQueue, ShouldBeUnique
+final class SendBirthdayWishesJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -28,6 +29,13 @@ final class SendBirthdayWishesJob implements ShouldQueue, ShouldBeUnique
     public int $backoff = 60;
 
     /**
+     * Create a new job instance.
+     */
+    public function __construct(
+        public readonly User $user
+    ) {}
+
+    /**
      * The unique ID of the job.
      */
     public function uniqueId(): string
@@ -36,20 +44,14 @@ final class SendBirthdayWishesJob implements ShouldQueue, ShouldBeUnique
     }
 
     /**
-     * Create a new job instance.
-     */
-    public function __construct(
-        public readonly User $user
-    ) {}
-
-    /**
      * Execute the job.
      */
     public function handle(): void
     {
         // Early return if the user no longer exists or email is unverified
-        if (!$this->user->exists || $this->user->email_verified_at === null) {
+        if (! $this->user->exists || $this->user->email_verified_at === null) {
             Log::warning("Skipping birthday email for user {$this->user->id}: User deleted or unverified");
+
             return;
         }
 
@@ -57,18 +59,19 @@ final class SendBirthdayWishesJob implements ShouldQueue, ShouldBeUnique
         $today = now();
         $birthDate = $this->user->date_of_birth;
 
-        if (!$birthDate || $birthDate->month !== $today->month || $birthDate->day !== $today->day) {
+        if (! $birthDate || $birthDate->month !== $today->month || $birthDate->day !== $today->day) {
             Log::warning("Skipping birthday email for user {$this->user->id}: Not their birthday today");
+
             return;
         }
 
         try {
             // Prepare personalized special offer
             $age = $birthDate->age;
-            $specialOffer = match(true) {
+            $specialOffer = match (true) {
                 $age >= 60 => "Enjoy a FREE coffee and pastry on your {$age}th birthday! Just show this email at any of our locations.",
                 $age >= 30 => "Enjoy a FREE coffee on your {$age}th birthday! Just show this email at any of our locations.",
-                default => "Enjoy a FREE coffee on your birthday! Just show this email at any of our locations.",
+                default => 'Enjoy a FREE coffee on your birthday! Just show this email at any of our locations.',
             };
 
             // Send birthday email to the user
@@ -77,7 +80,7 @@ final class SendBirthdayWishesJob implements ShouldQueue, ShouldBeUnique
 
             Log::info("Birthday email queued for {$this->user->email}");
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error("Failed to send birthday email to {$this->user->email}", [
                 'exception' => $e->getMessage(),
                 'user_id' => $this->user->id,

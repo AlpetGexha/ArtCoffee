@@ -4,15 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MenuResource\Pages;
 use App\Models\Menu;
-use App\Models\Product;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 
-class MenuResource extends Resource
+final class MenuResource extends Resource
 {
     protected static ?string $model = Menu::class;
 
@@ -24,7 +23,7 @@ class MenuResource extends Resource
             ->schema([
                 TextInput::make('title')
                     ->required(),
-                
+
                 Forms\Components\Textarea::make('description')
                     ->nullable(),
 

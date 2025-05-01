@@ -14,13 +14,7 @@ final class BirthdayWishesMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(
-        public User $user,
-        public string $specialOffer = '',
-    ) {}
+    public function __construct(public User $user, public string $specialOffer = '') {}
 
     /**
      * Get the message envelope.

@@ -36,10 +36,9 @@ final class Product extends Model
     ];
 
     public function menus()
-{
-    return $this->belongsToMany(Menu::class)
-        ->withPivot(['custom_price', 'discount_price'])
-        ->withTimestamps();
-}
-
+    {
+        return $this->belongsToMany(Menu::class)
+            ->withPivot(['custom_price', 'discount_price'])
+            ->withTimestamps();
+    }
 }
