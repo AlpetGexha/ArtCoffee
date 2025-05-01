@@ -4,13 +4,13 @@
     </div>
 
     <div class="p-6">
-        @if($showForm)
+        @if ($showForm)
             <div class="mb-4 text-gray-600">
                 <p>Enter your gift card activation code below to add its value to your account balance.</p>
             </div>
 
             <form wire:submit="redeem" class="space-y-6">
-                @if($showError)
+                @if ($showError)
                     <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
                         <div class="flex">
                             <div class="flex-shrink-0">
@@ -57,7 +57,7 @@
             </form>
         @endif
 
-        @if($showSuccess)
+        @if ($showSuccess)
             <div class="text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
                     <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

@@ -3,22 +3,35 @@
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-gray-900">Make Your Own Coffee</h1>
-            <button
-                class="relative flex items-center px-4 py-2 bg-amber-600 text-white font-medium rounded-lg"
-                x-data="{ cartCount: 0 }"
-                x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })"
-                @click="$dispatch('toggle-cart')"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                Cart
-                <span
-                    x-show="cartCount > 0"
-                    x-text="cartCount"
-                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"
-                ></span>
-            </button>
+            <div class="flex items-center gap-4">
+                @auth
+                    <span class="hidden sm:inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-800 rounded-full">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                          </svg>
+
+                        ${{ number_format(auth()->user()->balanceFloat, 2) }}
+                    </span>
+                @endauth
+
+                <button
+                    class="relative flex items-center px-4 py-2 bg-amber-600 text-white font-medium rounded-lg"
+                    x-data="{ cartCount: 0 }"
+                    x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })"
+                    @click="$dispatch('toggle-cart')"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Cart
+                    <span
+                        x-show="cartCount > 0"
+                        x-text="cartCount"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"
+                    ></span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -325,10 +338,94 @@
                                 <span class="text-gray-600">Tax (10%):</span>
                                 <span>${{ number_format($cartTotal * 0.1, 2) }}</span>
                             </div>
+                            @if ($pointsToRedeem > 0)
+                            <div class="flex justify-between text-green-700">
+                                <span>Points Discount:</span>
+                                <span>-${{ number_format($pointsToRedeem * 0.1, 2) }}</span>
+                            </div>
+                            @endif
                             <div class="flex justify-between font-medium">
                                 <span>Total:</span>
-                                <span>${{ number_format($cartTotal + ($cartTotal * 0.1), 2) }}</span>
+                                <span>${{ number_format($totalAmount, 2) }}</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Payment Method</h3>
+                        <div class="space-y-3">
+                            <!-- Wallet Payment Option -->
+                            @auth
+                                <label class="flex items-center justify-between p-3 border rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                                    :class="{'bg-amber-50 border-amber-500': $wire.paymentMethod === 'wallet'}"
+                                >
+                                    <div class="flex items-center space-x-2">
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="wallet"
+                                            wire:model.live="paymentMethod"
+                                            class="text-amber-600 focus:ring-amber-500"
+                                        >
+                                        <div>
+                                            <span class="font-medium">Wallet Balance</span>
+                                            <p class="text-sm text-gray-500">Pay using your account balance</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="font-medium">${{ number_format($walletBalance, 2) }}</span>
+                                        @if (!$hasEnoughBalance && $paymentMethod === 'wallet')
+                                            <p class="text-xs text-red-600">Insufficient balance</p>
+                                        @endif
+                                    </div>
+                                </label>
+
+                                @if (!$hasEnoughBalance && $paymentMethod === 'wallet')
+                                    <div class="bg-red-50 border border-red-100 text-red-700 p-3 rounded-md text-sm">
+                                        <div class="flex">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                            </svg>
+                                            <span>Your balance of ${{ number_format($walletBalance, 2) }} is less than the total amount of ${{ number_format($totalAmount, 2) }}. Please select another payment method or <a href="{{ route('gift-cards.redeem') }}" class="underline font-medium">add funds to your wallet</a>.</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endauth
+
+                            <!-- Cash Option -->
+                            <label class="flex items-center space-x-2 p-3 border rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                                :class="{'bg-amber-50 border-amber-500': $wire.paymentMethod === 'cash'}"
+                            >
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="cash"
+                                    wire:model.live="paymentMethod"
+                                    class="text-amber-600 focus:ring-amber-500"
+                                >
+                                <div>
+                                    <span class="font-medium">Cash</span>
+                                    <p class="text-sm text-gray-500">Pay at pickup</p>
+                                </div>
+                            </label>
+
+                            <!-- Credit Card Option -->
+                            <label class="flex items-center space-x-2 p-3 border rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                                :class="{'bg-amber-50 border-amber-500': $wire.paymentMethod === 'card'}"
+                            >
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="card"
+                                    wire:model.live="paymentMethod"
+                                    class="text-amber-600 focus:ring-amber-500"
+                                >
+                                <div>
+                                    <span class="font-medium">Credit Card</span>
+                                    <p class="text-sm text-gray-500">Pay at pickup with card</p>
+                                </div>
+                            </label>
                         </div>
                     </div>
 
@@ -395,11 +492,28 @@
                     <div class="flex justify-end">
                         <button
                             wire:click="placeOrder"
-                            class="px-6 py-3 bg-amber-600 text-white font-medium rounded-lg transition-all hover:bg-amber-700"
+                            class="px-6 py-3 bg-amber-600 text-white font-medium rounded-lg transition-all hover:bg-amber-700 disabled:opacity-70 disabled:cursor-not-allowed"
+                            wire:loading.attr="disabled"
+                            @if ($paymentMethod === 'wallet' && !$hasEnoughBalance) disabled @endif
                         >
-                            Place Order
+                            <span wire:loading.remove>Place Order</span>
+                            <span wire:loading>
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Processing...
+                            </span>
                         </button>
                     </div>
+
+                    @if (!auth()->check())
+                        <div class="border-t pt-4 mt-2 text-center">
+                            <p class="text-sm text-gray-600">
+                                <a href="{{ route('login') }}" class="text-amber-600 font-medium">Sign in</a> to use your wallet balance or earn points with your purchase.
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

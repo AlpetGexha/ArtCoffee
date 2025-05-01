@@ -12,7 +12,7 @@
                 </span>
             </div>
 
-            @if(!$showSuccessMessage)
+            @if (!$showSuccessMessage)
                 <form wire:submit="send" class="space-y-6">
                     <!-- Amount Selection -->
                     <div>
@@ -83,7 +83,7 @@
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-500 focus:ring-opacity-50"
                         >
                             <option value="">Select an occasion</option>
-                            @foreach($occasions as $value => $label)
+                            @foreach ($occasions as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
                             @endforeach
                         </select>
@@ -141,7 +141,7 @@
                             <div class="text-left text-gray-500">Activation Code:</div>
                             <div class="text-right font-mono text-xs bg-gray-100 p-1 rounded">{{ $createdGiftCard?->activation_key }}</div>
 
-                            @if($createdGiftCard?->occasion)
+                            @if ($createdGiftCard?->occasion)
                                 <div class="text-left text-gray-500">Occasion:</div>
                                 <div class="text-right">{{ ucfirst($createdGiftCard?->occasion) }}</div>
                             @endif

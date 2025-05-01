@@ -7,8 +7,8 @@ use App\Models\GiftCard;
 use App\Models\User;
 use Illuminate\Validation\Rules\Email;
 use Illuminate\View\View;
-use Livewire\Component;
 use Livewire\Attributes\Rule;
+use Livewire\Component;
 
 final class SendGiftCard extends Component
 {
@@ -49,8 +49,9 @@ final class SendGiftCard extends Component
      */
     public function send(): void
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             $this->redirect(route('login'));
+
             return;
         }
 
@@ -61,6 +62,7 @@ final class SendGiftCard extends Component
         // Check if user has sufficient balance
         if ($user->balanceFloat < $this->amount) {
             $this->addError('amount', 'Insufficient balance to send this gift card.');
+
             return;
         }
 

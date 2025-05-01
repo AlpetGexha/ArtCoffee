@@ -3,7 +3,7 @@
 
 {{ $senderName }} has sent you a gift card worth **{{ $amount }}**.
 
-@if($message)
+@if ($message)
 ## Personal Message
 "{{ $message }}"
 @endif

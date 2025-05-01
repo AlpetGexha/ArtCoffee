@@ -10,7 +10,6 @@ Route::get('/', function () {
     return redirect('order');
 })->name('home');
 
-
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

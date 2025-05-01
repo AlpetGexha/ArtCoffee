@@ -96,7 +96,7 @@ final class ProductResource extends Resource
                         Forms\Components\TextInput::make('loyalpoints_per_item')
                             ->label('Loyalty Points')
                             ->helperText('Points earned per item purchased')
-                            ->numeric()
+                            ->numeric(),
 
                     ])->collapsible(),
             ]);
@@ -113,7 +113,7 @@ final class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('category')
                     ->sortable()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         ProductCategory::COFFEE->value => 'warning',
                         ProductCategory::TEA->value => 'success',
                         ProductCategory::PASTRY->value => 'danger',

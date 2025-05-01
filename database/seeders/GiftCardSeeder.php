@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class GiftCardSeeder extends Seeder
+final class GiftCardSeeder extends Seeder
 {
     /**
      * Run the database seeds.
