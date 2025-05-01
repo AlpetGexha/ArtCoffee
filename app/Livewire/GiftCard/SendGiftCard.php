@@ -60,6 +60,12 @@ final class SendGiftCard extends Component
 
         $user = auth()->user();
 
+        // Prevent users from sending gift cards to themselves
+        if ($user->email === $this->recipientEmail) {
+            $this->addError('recipientEmail', 'You cannot send a gift card to yourself.');
+            return;
+        }
+
         // Check if user has sufficient balance
         if ($user->balanceFloat < $this->amount) {
             $this->addError('amount', 'Insufficient balance to send this gift card.');
