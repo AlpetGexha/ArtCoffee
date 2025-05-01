@@ -18,10 +18,10 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(Branch::class)->constrained()->restrictOnDelete();
             $table->foreignIdFor(Table::class)->nullable()->constrained()->nullOnDelete();
-            $table->enum('status', array_column(OrderStatus::cases(), 'value'))
-                ->default(OrderStatus::PENDING->value);
-            $table->enum('payment_status', array_column(PaymentStatus::cases(), 'value'))
-                ->default(PaymentStatus::PENDING->value);
+            $table->string('order_number')->nullable();
+
+            $table->enum('status', array_column(OrderStatus::cases(), 'value'))->default(OrderStatus::PENDING->value);
+            $table->enum('payment_status', array_column(PaymentStatus::cases(), 'value'))->default(PaymentStatus::PENDING->value);
             $table->string('payment_method')->nullable();
             $table->decimal('subtotal', 10, 2);
             $table->decimal('tax', 10, 2);
@@ -30,6 +30,7 @@ return new class extends Migration
             $table->integer('points_earned')->default(0);
             $table->integer('points_redeemed')->default(0);
             $table->text('special_instructions')->nullable();
+            $table->string('is_takeaway')->default(0);
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
             // $table->softDeletes();

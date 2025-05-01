@@ -32,12 +32,12 @@ final class OrderResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Order Information')
                     ->schema([
-                        Forms\Components\TextInput::make('order_number')
-                            ->required()
-                            ->maxLength(255)
-                            ->default(fn () => 'ORD-' . mb_strtoupper(mb_substr(md5(time()), 0, 8)))
-                            ->disabled()
-                            ->dehydrated(),
+                        // Forms\Components\TextInput::make('order_number')
+                        //     ->required()
+                        //     ->maxLength(255)
+                        //     ->default(fn () => 'ORD-' . mb_strtoupper(mb_substr(md5(time()), 0, 8)))
+                        //     ->disabled()
+                        //     ->dehydrated(),
                         Forms\Components\Select::make('user_id')
                             ->relationship('user', 'name')
                             ->searchable()
@@ -52,9 +52,6 @@ final class OrderResource extends Resource
                             ->searchable()
                             ->preload()
                             ->label('Table Number'),
-                        Forms\Components\DateTimePicker::make('ordered_at')
-                            ->required()
-                            ->default(now()),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Order Status')
@@ -79,11 +76,11 @@ final class OrderResource extends Resource
 
                 Forms\Components\Section::make('Additional Information')
                     ->schema([
-                        Forms\Components\Toggle::make('is_takeaway')
-                            ->required()
-                            ->default(false)
-                            ->label('Takeaway Order'),
-                        Forms\Components\Textarea::make('notes')
+                        // Forms\Components\Toggle::make('is_takeaway')
+                        //     ->required()
+                        //     ->default(false)
+                        //     ->label('Takeaway Order'),
+                        Forms\Components\Textarea::make('special_instructions')
                             ->maxLength(500),
                     ])->columns(2),
             ]);
