@@ -42,7 +42,7 @@ final class GiftCardFactory extends Factory
     /**
      * Indicate the gift card is redeemed.
      */
-    public function redeemed(User $recipient = null): static
+    public function redeemed(?User $recipient = null): static
     {
         return $this->state(fn (array $attributes) => [
             'redeemed_at' => $this->faker->dateTimeBetween('-3 months', 'now'),
@@ -77,7 +77,7 @@ final class GiftCardFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $user = User::factory()->create();
-            
+
             return [
                 'recipient_id' => $user->id,
                 'recipient_email' => $user->email,

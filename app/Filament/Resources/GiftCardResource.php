@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\GiftCardResource\Pages;
 use App\Models\GiftCard;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,7 +18,7 @@ final class GiftCardResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';
 
-    protected static ?string $navigationGroup = 'Shop Management';
+    // protected static ?string $navigationGroup = 'Shop Management';
 
     protected static ?int $navigationSort = 30;
 
@@ -105,7 +104,7 @@ final class GiftCardResource extends Resource
                             ->placeholder('Not yet redeemed')
                             ->disabled()
                             ->dehydrated(false)
-                            ->visible(fn (GiftCard $record = null) => $record && $record->redeemed_at !== null),
+                            ->visible(fn (?GiftCard $record = null) => $record && $record->redeemed_at !== null),
                     ])
                     ->columns(2),
             ]);
@@ -144,7 +143,7 @@ final class GiftCardResource extends Resource
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
                     ->getStateUsing(function (GiftCard $record): string {
-                        if (!$record->is_active) {
+                        if (! $record->is_active) {
                             return 'inactive';
                         }
                         if ($record->isRedeemed()) {
@@ -153,6 +152,7 @@ final class GiftCardResource extends Resource
                         if ($record->isExpired()) {
                             return 'expired';
                         }
+
                         return 'active';
                     })
                     ->colors([
@@ -190,7 +190,7 @@ final class GiftCardResource extends Resource
                     ->relationship('sender', 'name')
                     ->searchable()
                     ->preload(),
-                    
+
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'active' => 'Active',
@@ -202,7 +202,7 @@ final class GiftCardResource extends Resource
                         if (empty($data['value'])) {
                             return $query;
                         }
-                        
+
                         return match ($data['value']) {
                             'active' => $query->valid(),
                             'redeemed' => $query->redeemed(),
@@ -238,7 +238,7 @@ final class GiftCardResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->hidden(fn (GiftCard $record) => $record->isRedeemed() || !$record->isValid())
+                    ->hidden(fn (GiftCard $record) => $record->isRedeemed() || ! $record->isValid())
                     ->action(function (GiftCard $record) {
                         $record->redeemed_at = now();
                         $record->save();
@@ -249,7 +249,7 @@ final class GiftCardResource extends Resource
                     ->label(fn (GiftCard $record) => $record->is_active ? 'Deactivate' : 'Activate')
                     ->requiresConfirmation()
                     ->action(function (GiftCard $record) {
-                        $record->is_active = !$record->is_active;
+                        $record->is_active = ! $record->is_active;
                         $record->save();
                     }),
             ])
@@ -263,7 +263,7 @@ final class GiftCardResource extends Resource
                         ->requiresConfirmation()
                         ->action(function ($records) {
                             $records->each(function ($record) {
-                                if (!$record->is_active) {
+                                if (! $record->is_active) {
                                     $record->is_active = true;
                                     $record->save();
                                 }
