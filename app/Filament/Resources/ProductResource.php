@@ -92,6 +92,12 @@ final class ProductResource extends Resource
                         Forms\Components\TextInput::make('preparation_time_minutes')
                             ->numeric()
                             ->suffix('minutes'),
+
+                        Forms\Components\TextInput::make('loyalpoints_per_item')
+                            ->label('Loyalty Points')
+                            ->helperText('Points earned per item purchased')
+                            ->numeric()
+
                     ])->collapsible(),
             ]);
     }
@@ -107,7 +113,7 @@ final class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('category')
                     ->sortable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         ProductCategory::COFFEE->value => 'warning',
                         ProductCategory::TEA->value => 'success',
                         ProductCategory::PASTRY->value => 'danger',
@@ -118,6 +124,13 @@ final class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('base_price')
                     ->money('USD')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('loyalpoints_per_item')
+                    ->label('Loyalty Points')
+                    ->sortable()
+                    ->numeric()
+                    ->suffix('pts'),
+
                 Tables\Columns\IconColumn::make('is_available')
                     ->boolean()
                     ->label('Available')
