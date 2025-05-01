@@ -200,7 +200,7 @@ final class OrderPage extends Component
     /**
      * Place an order with selected payment method.
      */
-    public function placeOrder(): RedirectResponse
+    public function placeOrder()
     {
         if (empty($this->cart)) {
             $this->addError('cart', 'Your cart is empty');
@@ -237,8 +237,8 @@ final class OrderPage extends Component
             'payment_status' => $this->paymentMethod === 'wallet' ? PaymentStatus::PAID : PaymentStatus::PENDING,
             'payment_method' => $this->paymentMethod,
             'subtotal' => $subtotal,
-            'tax' => $tax,
-            'discount' => $discount,
+            'tax' => $tax ?? 0.00,
+            'discount' => $discount ?? 0.00,
             'total_amount' => $totalAmount,
             'points_redeemed' => $this->pointsToRedeem,
             'points_earned' => (int) floor($totalAmount), // Example: 1 point per dollar
@@ -262,7 +262,7 @@ final class OrderPage extends Component
                 foreach ($item['customizations'] as $category => $optionId) {
                     // Retrieve the product option to get its price
                     $productOption = ProductOption::find($optionId);
- if ($productOption) {
+                    if ($productOption) {
                         OrderItemCustomization::create([
                             'order_item_id' => $orderItem->id,
                             'product_option_id' => $optionId,
@@ -290,7 +290,7 @@ final class OrderPage extends Component
 
         // Redirect to order confirmation
 
-        return redirect()->route('orders.track',['order'=>])
+        return redirect()->route('orders.track', ['orderId' => $order->id]);
     }
 
     /**
