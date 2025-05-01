@@ -5,20 +5,45 @@ namespace App\Livewire\GiftCard;
 use App\Models\GiftCard;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Livewire\Attributes\Url;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 
 final class RedeemGiftCard extends Component
 {
     #[Rule('required|string|size:32')]
+    #[Url]
     public string $activationKey = '';
+
+    #[Url]
+    public bool $autoRedeem = false;
 
     public bool $showForm = true;
     public bool $showSuccess = false;
     public bool $showError = false;
     public ?GiftCard $giftCard = null;
     public string $errorMessage = '';
+
+    /**
+     * Initialize the component with route parameters.
+     */
+    public function mount(?string $code = null): void
+    {
+        // Set activation key from route parameter if provided
+        if ($code) {
+            $this->activationKey = $code;
+        }
+
+        // Check if auto-redemption is requested via query param
+        $this->autoRedeem = request()->boolean('auto_redeem', false);
+
+        // Auto-redeem if requested and we have a code
+        if ($this->autoRedeem && $this->activationKey && Auth::check()) {
+            $this->redeem();
+        }
+    }
 
     /**
      * Render the component.
@@ -36,7 +61,6 @@ final class RedeemGiftCard extends Component
         // Validate user is authenticated
         if (! auth()->check()) {
             $this->redirect(route('login'));
-
             return;
         }
 
@@ -48,6 +72,14 @@ final class RedeemGiftCard extends Component
 
             if (! $giftCard) {
                 throw new ModelNotFoundException('Gift card not found with that activation key.');
+            }
+
+            // Get the current user
+            $user = auth()->user();
+
+            // Check if the user is the intended recipient when is_for_anyone is false
+            if (!$giftCard->is_for_anyone && $giftCard->recipient_email !== $user->email) {
+                throw new Exception('This gift card was sent specifically to ' . $giftCard->recipient_email . ' and cannot be redeemed by your account.');
             }
 
             // Check if gift card is valid
@@ -68,9 +100,6 @@ final class RedeemGiftCard extends Component
             }
 
             // Process redemption
-            $user = auth()->user();
-
-            // Update gift card
             $giftCard->redeem($user);
 
             // Add amount to user's wallet

@@ -50,7 +50,7 @@ final class GiftCardMail extends Mailable
                 'senderName' => $this->giftCard->sender->name ?? 'Someone',
                 'message' => $this->giftCard->message,
                 'expirationDate' => $this->giftCard->expires_at->format('M j, Y'),
-                'redeemUrl' => route('gift-cards.redeem', ['code' => $this->giftCard->activation_key]),
+                'redeemUrl' => route('gift-cards.redeem', ['activationKey' => $this->giftCard->activation_key, 'auto_redeem' => true]),
             ],
         );
     }

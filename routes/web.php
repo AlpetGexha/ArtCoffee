@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Gift Card Routes
     Route::get('gift-cards/send', SendGiftCard::class)->name('gift-cards.send');
-    Route::get('gift-cards/redeem', RedeemGiftCard::class)->name('gift-cards.redeem');
+    Route::get('gift-cards/redeem/{code?}', RedeemGiftCard::class)->name('gift-cards.redeem');
 });
 
 require __DIR__ . '/auth.php';

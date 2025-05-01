@@ -27,6 +27,7 @@ final class GiftCard extends Model
         'occasion',
         'expires_at',
         'is_active',
+        'is_for_anyone',
     ];
 
     /**
@@ -191,6 +192,7 @@ final class GiftCard extends Model
             'redeemed_at' => 'datetime',
             'expires_at' => 'datetime',
             'is_active' => 'boolean',
+            'is_for_anyone' => 'boolean',
         ];
     }
 }

@@ -90,6 +90,7 @@ final class SendGiftCard extends Component
             'message' => $this->message,
             'occasion' => $this->occasion,
             'is_active' => true,
+            'is_for_anyone' => false, // Set to false to restrict redemption to the recipient only
             'expires_at' => now()->addYear(),
         ]);
 
