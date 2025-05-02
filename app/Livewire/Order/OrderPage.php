@@ -4,6 +4,7 @@ namespace App\Livewire\Order;
 
 use App\Enum\OrderStatus;
 use App\Enum\PaymentStatus;
+use App\Enum\ProductCategory;
 use App\Livewire\Actions\Order\ProcessWalletPaymentAction;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -12,6 +13,7 @@ use App\Models\Product;
 use App\Models\ProductOption;
 use App\Services\LoyaltyService;
 use Illuminate\View\View;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 final class OrderPage extends Component
@@ -29,6 +31,12 @@ final class OrderPage extends Component
     public bool $usePoints = false; // New property for loyalty points payment
     public int $availablePoints = 0; // New property for user's available points
     public int $requiredPoints = 0; // New property for points required for purchase
+    
+    #[Url]
+    public string $search = '';
+    
+    #[Url]
+    public ?string $categoryFilter = null;
 
     /**
      * Mount the component.
@@ -50,9 +58,27 @@ final class OrderPage extends Component
      */
     public function render(): View
     {
-        $products = Product::where('is_available', true)
-            ->orderBy('display_order')
-            ->get();
+        // Query to get products based on search and category filters
+        $productsQuery = Product::where('is_available', true);
+        
+        // Apply search filter if provided
+        if ($this->search) {
+            $productsQuery->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                      ->orWhere('description', 'like', '%' . $this->search . '%');
+            });
+        }
+        
+        // Apply category filter if provided
+        if ($this->categoryFilter) {
+            $productsQuery->where('category', $this->categoryFilter);
+        }
+        
+        // Get filtered products
+        $products = $productsQuery->orderBy('display_order')->get();
+        
+        // Get all available categories
+        $categories = ProductCategory::cases();
 
         $cartTotal = $this->calculateCartTotal();
         $subtotal = $cartTotal;
@@ -93,6 +119,7 @@ final class OrderPage extends Component
 
         return view('livewire.order.order-page', [
             'products' => $products,
+            'categories' => $categories,
             'cartTotal' => $cartTotal,
             'subtotal' => $subtotal,
             'preTaxAmount' => $preTaxAmount,
@@ -106,6 +133,22 @@ final class OrderPage extends Component
             'hasEnoughLoyaltyPoints' => $hasEnoughLoyaltyPoints,
             'pointsValueFormatted' => $pointsValueFormatted,
         ]);
+    }
+
+    /**
+     * Set category filter
+     */
+    public function setCategory(?string $category): void
+    {
+        $this->categoryFilter = $category;
+    }
+
+    /**
+     * Reset all filters
+     */
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'categoryFilter']);
     }
 
     public function startCustomizing(Product $product): void

@@ -2,11 +2,10 @@
     <!-- Header Section -->
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-gray-900">Make Your Own Coffee</h1>
+            <h1 class="text-2xl font-bold text-amber-800">Coffee Art Shop Menu</h1>
             <div class="flex items-center gap-4">
                 @auth
                     <span class="hidden sm:inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-800 rounded-full">
-
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="h-4 w-4 mr-1">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -23,12 +22,13 @@
                                 d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
                         </svg>
                         {{ auth()->user()->loyalty_points ?? 0 }} points
-                        {{-- ({{ $pointsValueFormatted }}) --}}
                     </span>
                 @endauth
 
                 <button class="relative flex items-center px-4 py-2 bg-amber-600 text-white font-medium rounded-lg"
-                    x-data="{ cartCount: 0 }" x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })" @click="$dispatch('toggle-cart')">
+                    x-data="{ cartCount: 0 }" 
+                    x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })" 
+                    @click="$dispatch('toggle-cart')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -42,7 +42,7 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
         <!-- Main Content -->
         <div x-data="{
             showCart: false,
@@ -50,54 +50,125 @@
             showCheckout: false
         }" class="relative">
 
-            <!-- Products List - Shown when not customizing -->
-            <div x-show="!showCustomization && !showCart && !showCheckout" class="space-y-8">
-                <h2 class="text-2xl font-semibold text-gray-900">Select Your Items</h2>
+            <!-- Search and Products Layout -->
+            <div x-show="!showCustomization && !showCart && !showCheckout" class="space-y-6">
+                <!-- Search Bar -->
+                <div class="flex items-center bg-white rounded-lg shadow overflow-hidden">
+                    <div class="relative w-full">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input 
+                            wire:model.live.debounce.300ms="search" 
+                            type="text" 
+                            placeholder="Search for items..." 
+                            class="block w-full pl-10 pr-3 py-3 border-0 focus:ring-0 focus:outline-none"
+                        >
+                    </div>
+                    @if($search)
+                        <button 
+                            wire:click="resetFilters" 
+                            class="p-3 text-gray-400 hover:text-gray-500"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    @endif
+                </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @forelse ($products as $product)
-                        <div class="bg-white rounded-lg shadow overflow-hidden">
-                            @if ($product->image_url)
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                    class="w-full h-48 object-cover">
-                            @else
-                                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                            @endif
-
-                            <div class="p-4">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">{{ $product->name }}</h3>
-                                        <p class="text-gray-600 text-sm line-clamp-2">{{ $product->description }}</p>
-                                    </div>
-                                    <p class="font-semibold text-amber-600">
-                                        ${{ number_format($product->base_price, 2) }}</p>
-                                </div>
-
-                                <div class="mt-4 flex justify-between">
-                                    <button wire:click="startCustomizing({{ $product->id }})"
-                                        @click="showCustomization = true"
-                                        class="px-4 py-2 bg-amber-600 text-white font-medium rounded-lg transition-all hover:bg-amber-700">
-                                        Customize
+                <!-- Two Column Layout: Categories + Products -->
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Left Column - Categories -->
+                    <div class="md:w-1/4">
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h2 class="text-xl font-bold text-amber-800 mb-4">Categories</h2>
+                            <div class="space-y-1">
+                                <button 
+                                    wire:click="setCategory(null)"
+                                    class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === null ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
+                                >
+                                    All Items
+                                </button>
+                                
+                                @foreach($categories as $category)
+                                    <button 
+                                        wire:click="setCategory('{{ $category->value }}')"
+                                        class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === $category->value ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
+                                    >
+                                        {{ ucfirst($category->name) }}
                                     </button>
-                                    <button wire:click="addProductToCart({{ $product->id }})"
-                                        class="px-4 py-2 border border-amber-600 text-amber-600 font-medium rounded-lg transition-all hover:bg-amber-50">
-                                        Add to Cart
-                                    </button>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
-                    @empty
-                        <div class="col-span-full py-12 text-center">
-                            <p class="text-gray-500">No products available at the moment.</p>
+                    </div>
+
+                    <!-- Right Column - Products -->
+                    <div class="md:w-3/4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @forelse ($products as $product)
+                                <div class="bg-white rounded-lg shadow overflow-hidden">
+                                    <div class="bg-amber-50 p-4 flex justify-center items-center h-48">
+                                        @if ($product->image_url)
+                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
+                                                class="h-full w-auto object-contain">
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-amber-300"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        @endif
+                                    </div>
+
+                                    <div class="p-4">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-lg font-semibold text-gray-900">{{ $product->name }}</h3>
+                                                <p class="text-sm text-gray-600 line-clamp-2 mt-1">{{ $product->description }}</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-amber-50 text-amber-700 font-semibold rounded-lg">
+                                                ${{ number_format($product->base_price, 2) }}
+                                            </span>
+                                        </div>
+
+                                        <div class="mt-4 flex gap-2">
+                                            <button 
+                                                wire:click="startCustomizing({{ $product->id }})"
+                                                @click="showCustomization = true"
+                                                class="flex-1 px-4 py-2 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700"
+                                            >
+                                                Customize
+                                            </button>
+                                            <button 
+                                                wire:click="addProductToCart({{ $product->id }})"
+                                                class="flex-1 px-4 py-2 border border-amber-600 text-amber-600 font-medium rounded-lg hover:bg-amber-50"
+                                            >
+                                                Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="col-span-full flex flex-col items-center justify-center py-12 bg-white rounded-lg shadow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p class="text-gray-500 text-center">No products found.</p>
+                                    @if($search || $categoryFilter)
+                                        <button 
+                                            wire:click="resetFilters"
+                                            class="mt-3 px-4 py-2 text-amber-700 underline hover:text-amber-800"
+                                        >
+                                            Clear filters
+                                        </button>
+                                    @endif
+                                </div>
+                            @endforelse
                         </div>
-                    @endforelse
+                    </div>
                 </div>
             </div>
 
