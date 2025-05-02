@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\OrderItemCustomization;
 use App\Models\Product;
 use App\Models\ProductOption;
+use App\Services\LoyaltyService;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -25,6 +26,9 @@ final class OrderPage extends Component
     public int $pointsToRedeem = 0;
     public string $paymentMethod = 'cash'; // 'cash', 'card', 'wallet'
     public bool $insufficientBalance = false;
+    public bool $usePoints = false; // New property for loyalty points payment
+    public int $availablePoints = 0; // New property for user's available points
+    public int $requiredPoints = 0; // New property for points required for purchase
 
     /**
      * Mount the component.
@@ -37,6 +41,7 @@ final class OrderPage extends Component
         // Set default payment method to wallet if user is logged in
         if (auth()->check()) {
             $this->paymentMethod = 'wallet';
+            $this->availablePoints = auth()->user()->loyalty_points ?? 0;
         }
     }
 
@@ -51,20 +56,55 @@ final class OrderPage extends Component
 
         $cartTotal = $this->calculateCartTotal();
         $subtotal = $cartTotal;
-        $tax = $subtotal * 0.10; // Assuming 10% tax
-        $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
-        $totalAmount = $subtotal + $tax - $discount;
+
+        // Tax calculation - 18% is already included in the price
+        $taxRate = 0.18;
+        $preTaxAmount = $subtotal / (1 + $taxRate);
+        $tax = $subtotal - $preTaxAmount;
+
+        // Get loyalty service
+        $loyaltyService = app(LoyaltyService::class);
+
+        // Update available points if user is authenticated
+        if (auth()->check()) {
+            $this->availablePoints = auth()->user()->loyalty_points ?? 0;
+        }
+
+        // Calculate required points for the current order
+        $this->requiredPoints = $loyaltyService->calculatePointsEarned($subtotal);
+        $hasEnoughLoyaltyPoints = auth()->check() && $this->availablePoints >= $this->requiredPoints;
+
+        // Calculate discount if using loyalty points
+        $discount = 0;
+        if ($this->usePoints && $hasEnoughLoyaltyPoints) {
+            $discount = $subtotal; // Full discount if using points for the entire order
+        } else {
+            $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point as before
+        }
+
+        $totalAmount = $subtotal - $discount;
 
         // Get user wallet balance if authenticated
         $walletBalance = auth()->check() ? auth()->user()->balanceFloat : 0;
         $hasEnoughBalance = $walletBalance >= $totalAmount;
 
+        // Format points value as dollars for display
+        $pointsValueFormatted = $loyaltyService->formatPointsAsDollars($this->availablePoints);
+
         return view('livewire.order.order-page', [
             'products' => $products,
             'cartTotal' => $cartTotal,
+            'subtotal' => $subtotal,
+            'preTaxAmount' => $preTaxAmount,
+            'tax' => $tax,
+            'taxRate' => $taxRate,
             'walletBalance' => $walletBalance,
             'hasEnoughBalance' => $hasEnoughBalance,
             'totalAmount' => $totalAmount,
+            'availablePoints' => $this->availablePoints,
+            'requiredPoints' => $this->requiredPoints,
+            'hasEnoughLoyaltyPoints' => $hasEnoughLoyaltyPoints,
+            'pointsValueFormatted' => $pointsValueFormatted,
         ]);
     }
 
@@ -194,6 +234,22 @@ final class OrderPage extends Component
         } else {
             $this->insufficientBalance = false;
         }
+
+        // Reset usePoints if not paying with points
+        if ($this->paymentMethod !== 'points') {
+            $this->usePoints = false;
+        }
+    }
+
+    /**
+     * Handle the loyalty points payment option toggle
+     */
+    public function updatedUsePoints(): void
+    {
+        // If turning on points payment, validate we have enough points
+        if ($this->usePoints) {
+            $this->validateLoyaltyPoints();
+        }
     }
 
     /**
@@ -203,44 +259,59 @@ final class OrderPage extends Component
     {
         if (empty($this->cart)) {
             $this->addError('cart', 'Your cart is empty');
-
             return redirect()->back();
         }
 
         // Validate wallet balance if wallet payment is selected
-        if ($this->paymentMethod === 'wallet' && ! $this->validateWalletBalance()) {
+        if ($this->paymentMethod === 'wallet' && !$this->validateWalletBalance()) {
+            return redirect()->back();
+        }
+
+        // Validate loyalty points if using points payment
+        if ($this->usePoints && !$this->validateLoyaltyPoints()) {
             return redirect()->back();
         }
 
         // Calculate totals
         $subtotal = $this->calculateCartTotal();
-        // $tax = $subtotal * 0.0;
-        // $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
-        // $totalAmount = $subtotal + $tax - $discount;
-        $totalAmount = $subtotal; // Adjust this based on your business logic
 
-        // Get the default branch (adjust this based on your business logic)
+        // Calculate tax - 18% is already included in the price
+        $taxRate = 0.18;
+        $preTaxAmount = $subtotal / (1 + $taxRate);
+        $tax = $subtotal - $preTaxAmount;
+
+        // Calculate discount based on payment method
+        $discount = 0;
+        if ($this->usePoints && $this->validateLoyaltyPoints()) {
+            $discount = $subtotal; // Full discount if using points
+        } else {
+            $discount = $this->pointsToRedeem * 0.10; // 10 cents per point if partially using points
+        }
+
+        $totalAmount = $subtotal - $discount;
+
+        // Get the default branch
         $defaultBranch = \App\Models\Branch::first();
-
-        if (! $defaultBranch) {
+        if (!$defaultBranch) {
             $this->addError('branch', 'No branch is available for processing orders');
-
             return redirect()->back();
         }
 
         // Create order
         $order = Order::create([
-            'user_id' => auth()->id() ?? null, // Optional: if user is logged in
-            'branch_id' => $defaultBranch->id, // Add the required branch_id field
+            'user_id' => auth()->id() ?? null,
+            'branch_id' => $defaultBranch->id,
             'status' => OrderStatus::PENDING,
-            'payment_status' => $this->paymentMethod === 'wallet' ? PaymentStatus::PAID : PaymentStatus::PENDING,
-            'payment_method' => $this->paymentMethod,
-            'subtotal' => $subtotal,
-            'tax' => $tax ?? 0.00,
-            'discount' => $discount ?? 0.00,
+            'payment_status' => ($this->paymentMethod === 'wallet' || $this->usePoints)
+                ? PaymentStatus::PAID
+                : PaymentStatus::PENDING,
+            'payment_method' => $this->usePoints ? 'loyalty_points' : $this->paymentMethod,
+            'subtotal' => $preTaxAmount, // Store pre-tax amount as subtotal
+            'tax' => $tax,
+            'discount' => $discount,
             'total_amount' => $totalAmount,
-            'points_redeemed' => $this->pointsToRedeem,
-            'points_earned' => (int) floor($totalAmount), // Example: 1 point per dollar
+            'points_redeemed' => $this->usePoints ? $this->requiredPoints : $this->pointsToRedeem,
+            'points_earned' => $this->usePoints ? 0 : (int)floor($totalAmount), // No points earned if paying with points
             'special_instructions' => $this->personalMessage,
         ]);
 
@@ -257,9 +328,8 @@ final class OrderPage extends Component
             ]);
 
             // Create order item customizations
-            if (! empty($item['customizations'])) {
+            if (!empty($item['customizations'])) {
                 foreach ($item['customizations'] as $category => $optionId) {
-                    // Retrieve the product option to get its price
                     $productOption = ProductOption::find($optionId);
                     if ($productOption) {
                         OrderItemCustomization::create([
@@ -281,14 +351,28 @@ final class OrderPage extends Component
             );
         }
 
+        // Process loyalty points payment if selected
+        if ($this->usePoints && auth()->check()) {
+            app(LoyaltyService::class)->redeemPoints(
+                user: auth()->user(),
+                amount: $subtotal
+            );
+        } else if (auth()->check() && $totalAmount > 0) {
+            // Add loyalty points for the purchase if not paying with points
+            app(LoyaltyService::class)->addPoints(
+                user: auth()->user(),
+                amount: $totalAmount
+            );
+        }
+
         // Reset cart and redirect
         $this->cart = [];
         $this->personalMessage = '';
         $this->pointsToRedeem = 0;
+        $this->usePoints = false;
         $this->paymentMethod = auth()->check() ? 'wallet' : 'cash';
 
         // Redirect to order confirmation
-
         return redirect()->route('orders.track', ['orderId' => $order->id]);
     }
 
@@ -297,9 +381,8 @@ final class OrderPage extends Component
      */
     private function validateWalletBalance(): bool
     {
-        if (! auth()->check()) {
+        if (!auth()->check()) {
             $this->addError('payment', 'Please log in to use wallet payment');
-
             return false;
         }
 
@@ -309,11 +392,32 @@ final class OrderPage extends Component
         if ($walletBalance < $totalAmount) {
             $this->insufficientBalance = true;
             $this->addError('payment', 'Insufficient wallet balance');
-
             return false;
         }
 
         $this->insufficientBalance = false;
+        return true;
+    }
+
+    /**
+     * Validate if user has enough loyalty points for the current order.
+     */
+    private function validateLoyaltyPoints(): bool
+    {
+        if (!auth()->check()) {
+            $this->addError('points', 'Please log in to use loyalty points');
+            $this->usePoints = false;
+            return false;
+        }
+
+        $subtotal = $this->calculateCartTotal();
+        $loyaltyService = app(LoyaltyService::class);
+
+        if (!$loyaltyService->hasEnoughPoints(auth()->user(), $subtotal)) {
+            $this->addError('points', 'You do not have enough loyalty points for this purchase');
+            $this->usePoints = false;
+            return false;
+        }
 
         return true;
     }
@@ -324,10 +428,19 @@ final class OrderPage extends Component
     private function calculateOrderTotal(): float
     {
         $subtotal = $this->calculateCartTotal();
-        $tax = $subtotal * 0.10; // Assuming 10% tax
-        $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
 
-        return $subtotal + $tax - $discount;
+        // Tax is already included in the price (18%)
+        $discount = 0;
+        if ($this->usePoints && auth()->check()) {
+            $loyaltyService = app(LoyaltyService::class);
+            if ($loyaltyService->hasEnoughPoints(auth()->user(), $subtotal)) {
+                $discount = $subtotal; // Full discount if using points
+            }
+        } else {
+            $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point
+        }
+
+        return $subtotal - $discount;
     }
 
     private function calculateCartTotal(): float
