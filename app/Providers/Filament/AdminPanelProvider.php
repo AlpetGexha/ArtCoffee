@@ -31,7 +31,7 @@ final class AdminPanelProvider extends PanelProvider
             ->brandName('CoffeeArt Admin')
             // ->brandLogo(asset('images/logo.png'))
             ->colors([
-                'primary' => Color::Indigo,
+                'primary' => Color::Emerald,
                 'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
