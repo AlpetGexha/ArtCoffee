@@ -44,7 +44,8 @@ final class MenuResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label('Menu Title'),
+                    ->label('Menu Title')
+                    ->searchable(),
 
                 TextColumn::make('products')
                     ->label('Products & Prices')
