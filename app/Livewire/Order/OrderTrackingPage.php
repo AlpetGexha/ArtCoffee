@@ -15,9 +15,9 @@ final class OrderTrackingPage extends Component
 
     public ?Order $currentOrder = null;
 
-    public function mount(?string $id = null)
+    public function mount(?string $orderId = null)
     {
-        $this->orderId = $id;
+        $this->orderId = $orderId;
         $this->loadCurrentOrder();
     }
 
