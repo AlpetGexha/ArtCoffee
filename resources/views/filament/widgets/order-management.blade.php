@@ -258,7 +258,7 @@
                                         <x-filament::button color="indigo" size="sm"
                                             wire:click="markAsReady({{ $order->id }})"
                                             wire:loading.attr="disabled" icon="heroicon-s-clipboard-document-check">
-                                           Ready To Pick Up
+                                            Ready To Pick Up
                                         </x-filament::button>
                                     @endif
 
@@ -429,11 +429,17 @@
                                         @elseif($order->status->value === \App\Enum\OrderStatus::PENDING->value)
                                             <x-filament::button color="info" size="sm"
                                                 wire:click="markAsReady({{ $order->id }})"
-                                                wire:loading.attr="disabled"
-                                                icon="heroicon-s-shopping-bag">
+                                                wire:loading.attr="disabled" icon="heroicon-s-shopping-bag">
                                                 Ready To Pick Up
                                             </x-filament::button>
                                         @endif
+
+                                        <x-filament::button color="info" size="sm"
+                                            wire:click="cancelOrder({{ $order->id }})"
+                                            wire:loading.attr="disabled" icon="heroicon-s-x-mark">
+                                            Cancle
+                                        </x-filament::button>
+
 
                                         {{-- Mark Paid for Cash Orders --}}
                                         @if ($order->payment_method === 'cash' && $order->payment_status === \App\Enum\PaymentStatus::PENDING->value)
