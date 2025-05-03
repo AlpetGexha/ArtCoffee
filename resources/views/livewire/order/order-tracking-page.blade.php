@@ -5,7 +5,7 @@
             // Auto refresh every 15 seconds
             this.refreshInterval = setInterval(() => {
                 @this.refresh();
-            }, 15000);
+            }, 7000);
 
             // Clean up interval when component is destroyed
             this.$on('beforeUnload', () => clearInterval(this.refreshInterval));
