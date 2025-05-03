@@ -4,11 +4,13 @@ namespace App\Filament\Widgets;
 
 use App\Actions\Notifications\SendOrderStatusNotification;
 use App\Enum\OrderStatus;
+use App\Enum\PaymentStatus;
 use App\Models\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\On;
 
 class OrderManagement extends Widget
 {
@@ -34,6 +36,11 @@ class OrderManagement extends Widget
     public bool $todayOnly = false;
 
     /**
+     * Sort direction for orders.
+     */
+    public string $sortDirection = 'asc'; // 'asc' for oldest first, 'desc' for newest first
+
+    /**
      * {@inheritDoc}
      */
     protected static string $view = 'filament.widgets.order-management';
@@ -42,6 +49,15 @@ class OrderManagement extends Widget
      * Mount the widget and load initial data.
      */
     public function mount(): void
+    {
+        $this->loadOrders();
+    }
+
+    /**
+     * Auto-refresh poll method that runs every 10 seconds.
+     */
+    #[On('refresh-orders')]
+    public function refreshOrders(): void
     {
         $this->loadOrders();
     }
@@ -69,17 +85,17 @@ class OrderManagement extends Widget
                 'user',
                 'items.product',
                 'items.orderItemCustomizations.productOption'
-            ])
-            ->latest();
+            ]);
 
         // Apply status filter
         if ($this->statusFilter !== 'all') {
             $query->where('status', $this->statusFilter);
         } else {
-            // Default to showing only pending and processing orders
+            // Default to showing only pending, processing, and ready orders
             $query->whereIn('status', [
                 OrderStatus::PENDING->value,
                 OrderStatus::PROCESSING->value,
+                OrderStatus::READY->value,
             ]);
         }
 
@@ -88,7 +104,19 @@ class OrderManagement extends Widget
             $query->whereDate('created_at', Carbon::today());
         }
 
+        // Apply sorting (default to oldest first, for FIFO processing)
+        $query->orderBy('created_at', $this->sortDirection);
+
         $this->orders = $query->take(9)->get();
+    }
+
+    /**
+     * Toggle the sort direction.
+     */
+    public function toggleSortDirection(): void
+    {
+        $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        $this->loadOrders();
     }
 
     /**
@@ -131,6 +159,14 @@ class OrderManagement extends Widget
     }
 
     /**
+     * Mark order as ready for pickup.
+     */
+    public function markAsReady(int $orderId): void
+    {
+        $this->updateOrderStatus($orderId, OrderStatus::READY->value);
+    }
+
+    /**
      * Mark order as processing.
      */
     public function markAsProcessing(int $orderId): void
@@ -144,5 +180,22 @@ class OrderManagement extends Widget
     public function markAsPicked(int $orderId): void
     {
         $this->updateOrderStatus($orderId, OrderStatus::COMPLETED->value);
+    }
+
+    /**
+     * Update payment status to paid.
+     */
+    public function markAsPaid(int $orderId): void
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return;
+        }
+
+        $order->payment_status = PaymentStatus::PAID->value;
+        $order->save();
+
+        $this->loadOrders();
     }
 }
