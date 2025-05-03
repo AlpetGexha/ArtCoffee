@@ -5,13 +5,15 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWalletFloat;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-final class User extends Authenticatable implements Wallet
+final class User extends Authenticatable implements Wallet, FilamentUser
 {
     use HasFactory, HasWalletFloat, Notifiable;
 
@@ -95,5 +97,12 @@ final class User extends Authenticatable implements Wallet
             'date_of_birth' => 'date',
             'preferences' => 'array',
         ];
+    }
+
+    // canAccessPanel
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->is_admin;
     }
 }
