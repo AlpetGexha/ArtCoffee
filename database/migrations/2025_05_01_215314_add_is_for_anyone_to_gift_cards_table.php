@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('gift_cards', function (Blueprint $table) {
-            $table->boolean('is_for_anyone')->default(true)->after('is_active');
+            // $table->boolean('is_for_anyone')->default(true)->after('is_active');
         });
     }
 

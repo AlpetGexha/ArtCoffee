@@ -31,7 +31,8 @@ final class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             // ->databaseNotifications()
             ->brandName('CoffeeArt Admin')
-            // ->brandLogo(asset('images/logo.png'))
+            // ->brandLogo(asset('images/artcaffe-bg.png'))
+            // ->brandLogoHeight('4rem')
             ->colors([
                 'primary' => Color::Emerald,
                 'gray' => Color::Slate,
