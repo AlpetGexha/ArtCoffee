@@ -9,7 +9,7 @@
     <button
         x-on:click.stop.prevent="open = !open"
         type="button"
-        class="relative flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:ring-offset-2 transition"
+        class="relative flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 focus:ring-offset-2 transition"
         aria-label="Notifications"
         id="notification-menu-button"
         aria-expanded="false"
@@ -50,7 +50,7 @@
                 @if ($notifications->isNotEmpty())
                     <button
                         wire:click.stop="markAllAsRead"
-                        class="text-sm text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300"
+                        class="text-sm text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300"
                         role="menuitem"
                         tabindex="-1"
                     >
@@ -70,7 +70,7 @@
                             <!-- Notification Type Icon -->
                             <div class="mt-1 flex-shrink-0">
                                 @if (isset($notification->data['type']) && $notification->data['type'] === 'order')
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                     </svg>
                                 @else
@@ -100,7 +100,7 @@
                                         <a
                                             href="{{ $notification->data['actionUrl'] }}"
                                             wire:click.stop="markAsRead('{{ $notification->id }}')"
-                                            class="text-xs px-2 py-1 rounded-md bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-800 dark:text-emerald-200 dark:hover:bg-emerald-700 transition"
+                                            class="text-xs px-2 py-1 rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-800 dark:text-amber-200 dark:hover:bg-amber-700 transition"
                                             role="menuitem"
                                             tabindex="-1"
                                         >
