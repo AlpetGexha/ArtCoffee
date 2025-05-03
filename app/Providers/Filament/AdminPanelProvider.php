@@ -28,6 +28,7 @@ final class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->registration()
+            ->databaseNotifications()
             ->brandName('CoffeeArt Admin')
             // ->brandLogo(asset('images/logo.png'))
             ->colors([

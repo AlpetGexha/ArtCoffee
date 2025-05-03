@@ -89,6 +89,9 @@ final class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                return $query->latest();
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('order_number')
                     ->searchable()
@@ -141,11 +144,11 @@ final class OrderResource extends Resource
                         return $query
                             ->when(
                                 $data['ordered_from'] ?? null,
-                                fn (Builder $query, $date): Builder => $query->whereDate('ordered_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('ordered_at', '>=', $date),
                             )
                             ->when(
                                 $data['ordered_until'] ?? null,
-                                fn (Builder $query, $date): Builder => $query->whereDate('ordered_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('ordered_at', '<=', $date),
                             );
                     }),
             ])
