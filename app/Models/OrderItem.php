@@ -61,4 +61,10 @@ final class OrderItem extends Model
     {
         return $this->hasMany(OrderItemCustomization::class);
     }
+
+    // orderItemCustomizations
+    public function orderItemCustomizations(): HasMany
+    {
+        return $this->hasMany(OrderItemCustomization::class);
+    }
 }

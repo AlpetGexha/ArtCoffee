@@ -33,7 +33,8 @@ final class OrderTrackingPage extends Component
 
             // If order not found or not accessible to this user, reset
             if (! $this->currentOrder ||
-                (! auth()->check() && ! session()->has('guest_order_' . $this->orderId))) {
+                (! auth()->check() && ! session()->has('guest_order_' . $this->orderId)) ||
+                (auth()->check() && $this->currentOrder->user_id !== auth()->id())) {
                 $this->currentOrder = null;
             }
         } elseif (auth()->check()) {
@@ -48,7 +49,6 @@ final class OrderTrackingPage extends Component
                 ->latest()
                 ->first();
         } else {
-            // No specific order and no authenticated user
             $this->currentOrder = null;
         }
     }
