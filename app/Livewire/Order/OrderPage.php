@@ -520,4 +520,34 @@ final class OrderPage extends Component
 
         return $total;
     }
+
+    /**
+     * Check if a product is in the cart.
+     */
+    public function isProductInCart(int $productId): bool
+    {
+        foreach ($this->cart as $item) {
+            if ($item['product_id'] === $productId) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Get the total quantity of a product in the cart.
+     */
+    public function getProductQuantityInCart(int $productId): int
+    {
+        $quantity = 0;
+        
+        foreach ($this->cart as $item) {
+            if ($item['product_id'] === $productId) {
+                $quantity += $item['quantity'];
+            }
+        }
+        
+        return $quantity;
+    }
 }

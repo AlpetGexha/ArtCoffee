@@ -217,7 +217,7 @@
                     <div class="md:w-3/4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                             @forelse ($products as $product)
-                                <div class="bg-white rounded-lg shadow overflow-hidden">
+                                <div class="bg-white rounded-lg shadow overflow-hidden {{ $this->isProductInCart($product->id) ? 'ring-2 ring-green-500' : '' }}">
                                     <div class="bg-amber-50 p-3 flex justify-center items-center h-36 sm:h-48">
                                         @if ($product->image_url)
                                             <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
@@ -243,21 +243,32 @@
                                         </div>
 
                                         <div class="mt-3 sm:mt-4 flex gap-2">
-                                            @if($product->is_customizable)
-                                                <button
-                                                    wire:click="startCustomizing({{ $product->id }})"
-                                                    @click="showCustomization = true"
-                                                    class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-700 cursor-pointer "
+                                            <button 
+                                                wire:click="startCustomizing({{ $product->id }})"
+                                                @click="showCustomization = true"
+                                                class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-700"
+                                            >
+                                                Customize
+                                            </button>
+                                            
+                                            @if ($this->isProductInCart($product->id))
+                                                <button 
+                                                    wire:click="addProductToCart({{ $product->id }})"
+                                                    class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 border border-green-600 bg-green-50 text-green-600 text-xs sm:text-sm font-medium rounded-lg hover:bg-green-100 flex items-center justify-center"
                                                 >
-                                                    Customize
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    In Cart ({{ $this->getProductQuantityInCart($product->id) }})
+                                                </button>
+                                            @else
+                                                <button 
+                                                    wire:click="addProductToCart({{ $product->id }})"
+                                                    class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 border border-amber-600 text-amber-600 text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-50"
+                                                >
+                                                    Add to Cart
                                                 </button>
                                             @endif
-                                            <button
-                                                wire:click="addProductToCart({{ $product->id }})"
-                                                class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 border border-amber-600 text-amber-600 text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-50 cursor-pointer cursor-pointer"
-                                            >
-                                                Add to Cart
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
