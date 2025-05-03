@@ -16,6 +16,8 @@ use App\Services\LoyaltyService;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Filament\Notifications\Notification;
+
 
 final class OrderPage extends Component
 {
@@ -385,6 +387,13 @@ final class OrderPage extends Component
             'special_instructions' => $this->personalMessage,
         ]);
 
+        // Send notification to customer
+        // Notification::make()
+        //     ->title('Order Placed Successfully')
+        //     ->success()
+        //     ->sendToDatabase($order);
+
+
         // Create order items
         foreach ($this->cart as $item) {
             $orderItem = OrderItem::create([
@@ -424,8 +433,8 @@ final class OrderPage extends Component
         // Process loyalty points payment if selected
         if ($this->usePoints && auth()->check()) {
             app(LoyaltyService::class)->redeemPoints(
-                 auth()->user(),
-                 $subtotal
+                auth()->user(),
+                $subtotal
             );
         } elseif (auth()->check() && $totalAmount > 0) {
             // Add loyalty points for the purchase if not paying with points
@@ -546,6 +555,20 @@ final class OrderPage extends Component
         }
 
         return $subtotal - $discount;
+    }
+
+    /**
+     * Send notifications to admin users about new order.
+     */
+    private function notifyAdmins(Order $order): void
+    {
+        // Get all admin users
+        $admins = \App\Models\User::where('is_admin', true)->get();
+
+        // Create a notification for each admin
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\NewOrderNotification($order));
+        }
     }
 
     private function calculateCartTotal(): float

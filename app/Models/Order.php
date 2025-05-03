@@ -127,4 +127,14 @@ final class Order extends Model
             OrderStatus::READY,
         ])->orderBy('created_at', 'desc');
     }
+
+    // public function notify()
+    // {
+    //     $admins = \App\Models\User::where('is_admin', true)->get();
+
+    //     // Create a notification for each admin
+    //     foreach ($admins as $admin) {
+    //         $admin->notify(new \App\Notifications\NewOrderNotification($this));
+    //     }
+    // }
 }
