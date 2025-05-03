@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 final class LoyaltyService
 {
@@ -23,6 +22,7 @@ final class LoyaltyService
     public function hasEnoughPoints(User $user, float $amount): bool
     {
         $requiredPoints = $this->calculatePointsEarned($amount);
+
         return $user->loyalty_points >= $requiredPoints;
     }
 
@@ -72,6 +72,7 @@ final class LoyaltyService
     public function formatPointsAsDollars(int $points): string
     {
         $value = $this->calculatePointsValue($points);
+
         return '$' . number_format($value, 2);
     }
 }

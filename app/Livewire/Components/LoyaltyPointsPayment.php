@@ -3,8 +3,8 @@
 namespace App\Livewire\Components;
 
 use App\Services\LoyaltyService;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 final class LoyaltyPointsPayment extends Component
 {
@@ -31,7 +31,7 @@ final class LoyaltyPointsPayment extends Component
             'pointsValueFormatted' => $pointsValueFormatted,
             'requiredPoints' => $this->requiredPoints,
             'requiredValueFormatted' => $requiredValueFormatted,
-            'hasEnoughPoints' => $hasEnoughPoints
+            'hasEnoughPoints' => $hasEnoughPoints,
         ]);
     }
 

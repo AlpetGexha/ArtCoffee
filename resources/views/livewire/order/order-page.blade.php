@@ -132,7 +132,7 @@
                                         All Items
                                     </button>
 
-                                    @forelse($categories as $category)
+                                    @forelse ($categories as $category)
                                         <button wire:click="setCategory('{{ $category->value }}')"
                                             @click="showCategories = false"
                                             class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === $category->value ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}">
@@ -167,7 +167,7 @@
                                         All Menus
                                     </button>
 
-                                    @forelse($menus as $menu)
+                                    @forelse ($menus as $menu)
                                         <button wire:click="setMenu({{ $menu->id }})" @click="showMenus = false"
                                             class="w-full text-left px-3 py-2 rounded-md transition {{ $menuFilter === $menu->id ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}">
                                             {{ $menu->title }}

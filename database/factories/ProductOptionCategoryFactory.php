@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductOptionCategory>
  */
-class ProductOptionCategoryFactory extends Factory
+final class ProductOptionCategoryFactory extends Factory
 {
     /**
      * Define the model's default state.

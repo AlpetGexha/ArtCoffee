@@ -15,9 +15,18 @@ final class Menu extends Model
             ->withTimestamps();
     }
 
+    public function getTotalPriceAttribute()
+    {
+        return $this->products->sum(function ($product) {
+            return $product->pivot->custom_price
+                ?? $product->pivot->discount_price
+                ?? $product->price;
+        });
+    }
+
     protected static function booted()
     {
-        static::saved(function ($menu) {
+        self::saved(function ($menu) {
             if (request()->has('products')) {
                 $products = collect(request('products'))->mapWithKeys(function ($item) {
                     return [$item['product_id'] => [
@@ -25,18 +34,9 @@ final class Menu extends Model
                         'discount_price' => $item['pivot']['discount_price'] ?? null,
                     ]];
                 });
-                
+
                 $menu->products()->sync($products);
             }
-        });
-    }
-
-    public function getTotalPriceAttribute()
-    {
-        return $this->products->sum(function ($product) {
-            return $product->pivot->custom_price 
-                ?? $product->pivot->discount_price 
-                ?? $product->price;
         });
     }
 }

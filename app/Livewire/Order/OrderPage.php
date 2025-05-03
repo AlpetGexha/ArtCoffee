@@ -327,16 +327,17 @@ final class OrderPage extends Component
     {
         if (empty($this->cart)) {
             $this->addError('cart', 'Your cart is empty');
+
             return redirect()->back();
         }
 
         // Validate wallet balance if wallet payment is selected
-        if ($this->paymentMethod === 'wallet' && !$this->validateWalletBalance()) {
+        if ($this->paymentMethod === 'wallet' && ! $this->validateWalletBalance()) {
             return redirect()->back();
         }
 
         // Validate loyalty points if using points payment
-        if ($this->usePoints && !$this->validateLoyaltyPoints()) {
+        if ($this->usePoints && ! $this->validateLoyaltyPoints()) {
             return redirect()->back();
         }
 
@@ -360,8 +361,9 @@ final class OrderPage extends Component
 
         // Get the default branch
         $defaultBranch = \App\Models\Branch::first();
-        if (!$defaultBranch) {
+        if (! $defaultBranch) {
             $this->addError('branch', 'No branch is available for processing orders');
+
             return redirect()->back();
         }
 
@@ -379,7 +381,7 @@ final class OrderPage extends Component
             'discount' => $discount,
             'total_amount' => $totalAmount,
             'points_redeemed' => $this->usePoints ? $this->requiredPoints : $this->pointsToRedeem,
-            'points_earned' => $this->usePoints ? 0 : (int)floor($totalAmount), // No points earned if paying with points
+            'points_earned' => $this->usePoints ? 0 : (int) floor($totalAmount), // No points earned if paying with points
             'special_instructions' => $this->personalMessage,
         ]);
 
@@ -396,7 +398,7 @@ final class OrderPage extends Component
             ]);
 
             // Create order item customizations
-            if (!empty($item['customizations'])) {
+            if (! empty($item['customizations'])) {
                 foreach ($item['customizations'] as $category => $optionId) {
                     $productOption = ProductOption::find($optionId);
                     if ($productOption) {
@@ -425,7 +427,7 @@ final class OrderPage extends Component
                 user: auth()->user(),
                 amount: $subtotal
             );
-        } else if (auth()->check() && $totalAmount > 0) {
+        } elseif (auth()->check() && $totalAmount > 0) {
             // Add loyalty points for the purchase if not paying with points
             app(LoyaltyService::class)->addPoints(
                 auth()->user(),
@@ -445,12 +447,43 @@ final class OrderPage extends Component
     }
 
     /**
+     * Check if a product is in the cart.
+     */
+    public function isProductInCart(int $productId): bool
+    {
+        foreach ($this->cart as $item) {
+            if ($item['product_id'] === $productId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the total quantity of a product in the cart.
+     */
+    public function getProductQuantityInCart(int $productId): int
+    {
+        $quantity = 0;
+
+        foreach ($this->cart as $item) {
+            if ($item['product_id'] === $productId) {
+                $quantity += $item['quantity'];
+            }
+        }
+
+        return $quantity;
+    }
+
+    /**
      * Validate if user has enough wallet balance for the current order.
      */
     private function validateWalletBalance(): bool
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             $this->addError('payment', 'Please log in to use wallet payment');
+
             return false;
         }
 
@@ -460,10 +493,12 @@ final class OrderPage extends Component
         if ($walletBalance < $totalAmount) {
             $this->insufficientBalance = true;
             $this->addError('payment', 'Insufficient wallet balance');
+
             return false;
         }
 
         $this->insufficientBalance = false;
+
         return true;
     }
 
@@ -472,18 +507,20 @@ final class OrderPage extends Component
      */
     private function validateLoyaltyPoints(): bool
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             $this->addError('points', 'Please log in to use loyalty points');
             $this->usePoints = false;
+
             return false;
         }
 
         $subtotal = $this->calculateCartTotal();
         $loyaltyService = app(LoyaltyService::class);
 
-        if (!$loyaltyService->hasEnoughPoints(auth()->user(), $subtotal)) {
+        if (! $loyaltyService->hasEnoughPoints(auth()->user(), $subtotal)) {
             $this->addError('points', 'You do not have enough loyalty points for this purchase');
             $this->usePoints = false;
+
             return false;
         }
 
@@ -519,35 +556,5 @@ final class OrderPage extends Component
         }
 
         return $total;
-    }
-
-    /**
-     * Check if a product is in the cart.
-     */
-    public function isProductInCart(int $productId): bool
-    {
-        foreach ($this->cart as $item) {
-            if ($item['product_id'] === $productId) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the total quantity of a product in the cart.
-     */
-    public function getProductQuantityInCart(int $productId): int
-    {
-        $quantity = 0;
-
-        foreach ($this->cart as $item) {
-            if ($item['product_id'] === $productId) {
-                $quantity += $item['quantity'];
-            }
-        }
-
-        return $quantity;
     }
 }

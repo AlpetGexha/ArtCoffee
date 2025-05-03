@@ -16,12 +16,12 @@
                 name="use_loyalty_points"
                 class="form-checkbox h-5 w-5 text-accent rounded border-zinc-300 focus:ring-accent"
                 x-model="usePoints"
-                @if(!$hasEnoughPoints) disabled @endif
+                @if (!$hasEnoughPoints) disabled @endif
                 wire:model.live="usePoints"
             >
             <label
                 for="use-loyalty-points"
-                class="ml-2 text-sm font-medium @if(!$hasEnoughPoints) text-zinc-400 dark:text-zinc-600 cursor-not-allowed @else text-zinc-700 dark:text-zinc-300 cursor-pointer @endif"
+                class="ml-2 text-sm font-medium @if (!$hasEnoughPoints) text-zinc-400 dark:text-zinc-600 cursor-not-allowed @else text-zinc-700 dark:text-zinc-300 cursor-pointer @endif"
             >
                 Pay with points
             </label>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="bg-zinc-50 dark:bg-zinc-800 rounded p-3 text-sm" x-show="hasEnoughPoints" x-transition>
-        @if($hasEnoughPoints)
+        @if ($hasEnoughPoints)
             <div class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />

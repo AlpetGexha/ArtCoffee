@@ -26,7 +26,7 @@ final class MenuResource extends Resource
 
                 Forms\Components\Textarea::make('description')
                     ->nullable(),
-                
+
                 Select::make('products')
                     ->multiple()
                     ->relationship('products', 'name')
