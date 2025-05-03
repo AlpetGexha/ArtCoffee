@@ -8,7 +8,7 @@
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
         <div class="lg:flex lg:items-start lg:space-x-12">
             <div class="lg:w-1/2">
-                <p class="text-xl text-amber-600 mb-4">Nga kokërr në filxhan</p>
+                <p class="text-xl text-amber-600 mb-4">Art Caffee</p>
                 <h1 class="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white leading-tight">
                     Nga kokrra në <span class="text-amber-600">filxhan</span>
                 </h1>
@@ -16,7 +16,7 @@
                     Përjetoni përzierjen e përkryer të kafesë artizanale dhe përsosmërisë kulinare në një atmosferë ku kreativiteti takon komoditetin.
                 </p>
                 <div class="mt-10">
-                    <a href="#menu" class="bg-amber-600 text-white px-8 py-4 rounded-full font-medium hover:bg-amber-700 transition-colors inline-block">
+                    <a href="{{ route('login') }}" class="bg-amber-600 text-white px-8 py-4 rounded-full font-medium hover:bg-amber-700 transition-colors inline-block">
                         Shiko Menynë
                     </a>
                 </div>
@@ -39,7 +39,7 @@
             <!-- QR Code -->
             <div class="flex flex-col items-center justify-center space-y-6">
                 <div class="w-72 h-72 bg-white p-6 rounded-2xl shadow-xl transform hover:scale-[1.02] transition-transform">
-                    <img src="{{ asset('images/frame.png') }}" alt="Skano për të Porositur" class="w-full h-full">
+                    <img src="{{ asset('images/1fram1.png') }}" alt="Skano për të Porositur" class="w-full h-full">
                 </div>
                 <div class="text-center space-y-2">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Porositni Online</h3>
