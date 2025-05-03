@@ -1,57 +1,62 @@
 <div class="min-h-screen bg-gray-100">
-    <!-- Header Section -->
+    <!-- Header Section - Optimized for mobile -->
     <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-amber-800">Coffee Art Shop Menu</h1>
-            <div class="flex items-center gap-4">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl sm:text-2xl font-bold text-amber-800">Coffee Art Shop</h1>
+            <div class="flex items-center gap-2 sm:gap-4">
                 @auth
-                    <span class="hidden sm:inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-800 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="h-4 w-4 mr-1">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
-                        </svg>
+                    <div class="flex items-center gap-1 sm:gap-2">
+                        <!-- Wallet balance - Show icon only on smallest screens -->
+                        <span class="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1.5 bg-amber-50 text-amber-800 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                            </svg>
+                            <span class="text-xs sm:text-sm">${{ number_format(auth()->user()->balanceFloat, 2) }}</span>
+                        </span>
 
-                        ${{ number_format(auth()->user()->balanceFloat, 2) }}
-                    </span>
-
-                    <span class="hidden sm:inline-flex items-center px-3 py-1.5 bg-green-50 text-green-800 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="h-4 w-4 mr-1">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
-                        </svg>
-                        {{ auth()->user()->loyalty_points ?? 0 }} points
-                    </span>
+                        <!-- Loyalty points - Show icon only on smallest screens -->
+                        <span class="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1.5 bg-green-50 text-green-800 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="h-3 w-3 sm:h-4 sm:w-4 sm:mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
+                            </svg>
+                            <span class="text-xs sm:text-sm">{{ auth()->user()->loyalty_points ?? 0 }}</span>
+                        </span>
+                    </div>
                 @endauth
 
-                <button class="relative flex items-center px-4 py-2 bg-amber-600 text-white font-medium rounded-lg"
+                <button class="relative flex items-center px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white font-medium rounded-lg text-sm sm:text-base"
                     x-data="{ cartCount: 0 }" 
                     x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })" 
                     @click="$dispatch('toggle-cart')">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     Cart
                     <span x-show="cartCount > 0" x-text="cartCount"
-                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"></span>
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-xs"></span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
         <!-- Main Content -->
         <div x-data="{
             showCart: false,
             showCustomization: false,
-            showCheckout: false
+            showCheckout: false,
+            showCategories: false,
+            showMenus: false
         }" class="relative">
 
             <!-- Search and Products Layout -->
-            <div x-show="!showCustomization && !showCart && !showCheckout" class="space-y-6">
+            <div x-show="!showCustomization && !showCart && !showCheckout" class="space-y-4 sm:space-y-6">
                 <!-- Search Bar -->
                 <div class="flex items-center bg-white rounded-lg shadow overflow-hidden">
                     <div class="relative w-full">
@@ -67,7 +72,7 @@
                             class="block w-full pl-10 pr-3 py-3 border-0 focus:ring-0 focus:outline-none"
                         >
                     </div>
-                    @if($search)
+                    @if($search || $categoryFilter || $menuFilter)
                         <button 
                             wire:click="resetFilters" 
                             class="p-3 text-gray-400 hover:text-gray-500"
@@ -79,38 +84,141 @@
                     @endif
                 </div>
 
-                <!-- Two Column Layout: Categories + Products -->
-                <div class="flex flex-col md:flex-row gap-6">
-                    <!-- Left Column - Categories -->
-                    <div class="md:w-1/4">
-                        <div class="bg-white rounded-lg shadow p-4">
-                            <h2 class="text-xl font-bold text-amber-800 mb-4">Categories</h2>
-                            <div class="space-y-1">
-                                <button 
-                                    wire:click="setCategory(null)"
-                                    class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === null ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
-                                >
-                                    All Items
+                <!-- Filter Buttons for Mobile -->
+                <div class="grid grid-cols-2 gap-3 md:hidden">
+                    <!-- Category Filter Button -->
+                    <button 
+                        @click="showCategories = !showCategories; showMenus = false"
+                        class="flex items-center justify-between px-4 py-2 bg-white rounded-lg shadow text-amber-800 font-medium"
+                    >
+                        <span>{{ $categoryFilter ? ucfirst($categoryFilter) : 'Categories' }}</span>
+                        <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            class="h-5 w-5 transition-transform" 
+                            :class="{'rotate-180': showCategories}"
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Menu Filter Button -->
+                    <button 
+                        @click="showMenus = !showMenus; showCategories = false"
+                        class="flex items-center justify-between px-4 py-2 bg-white rounded-lg shadow text-amber-800 font-medium"
+                    >
+                        <span>{{ $menuFilter ? $menus->firstWhere('id', $menuFilter)?->title ?? 'Menus' : 'Menus' }}</span>
+                        <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            class="h-5 w-5 transition-transform" 
+                            :class="{'rotate-180': showMenus}"
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Two Column Layout: Filters + Products -->
+                <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
+                    <!-- Left Column - Filters (Mobile Drawer, Desktop Sidebar) -->
+                    <div class="md:w-1/4 space-y-4">
+                        <!-- Categories Filter -->
+                        <div 
+                            class="md:static fixed inset-0 z-30 md:z-auto transition-all duration-300 transform md:transform-none bg-white md:bg-transparent shadow-lg md:shadow-none overflow-auto md:overflow-visible"
+                            :class="showCategories ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+                        >
+                            <div class="flex md:hidden justify-between items-center p-4 border-b">
+                                <h2 class="text-lg font-bold text-amber-800">Categories</h2>
+                                <button @click="showCategories = false" class="text-gray-500 hover:text-gray-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
                                 </button>
-                                
-                                @foreach($categories as $category)
+                            </div>
+                            <div class="bg-white rounded-lg shadow p-4">
+                                <h2 class="hidden md:block text-xl font-bold text-amber-800 mb-4">Categories</h2>
+                                <div class="space-y-1">
                                     <button 
-                                        wire:click="setCategory('{{ $category->value }}')"
-                                        class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === $category->value ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
+                                        wire:click="setCategory(null)"
+                                        @click="showCategories = false"
+                                        class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === null ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
                                     >
-                                        {{ ucfirst($category->name) }}
+                                        All Items
                                     </button>
-                                @endforeach
+                                    
+                                    @forelse($categories as $category)
+                                        <button 
+                                            wire:click="setCategory('{{ $category->value }}')"
+                                            @click="showCategories = false"
+                                            class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === $category->value ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
+                                        >
+                                            {{ ucfirst($category->name) }}
+                                        </button>
+                                    @empty
+                                        <div class="text-gray-500 text-sm italic px-3 py-2">No categories available</div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Menus Filter -->
+                        <div 
+                            class="md:static fixed inset-0 z-30 md:z-auto transition-all duration-300 transform md:transform-none bg-white md:bg-transparent shadow-lg md:shadow-none overflow-auto md:overflow-visible"
+                            :class="showMenus ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+                        >
+                            <div class="flex md:hidden justify-between items-center p-4 border-b">
+                                <h2 class="text-lg font-bold text-amber-800">Menus</h2>
+                                <button @click="showMenus = false" class="text-gray-500 hover:text-gray-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="bg-white rounded-lg shadow p-4">
+                                <h2 class="hidden md:block text-xl font-bold text-amber-800 mb-4">Menus</h2>
+                                <div class="space-y-1">
+                                    <button 
+                                        wire:click="setMenu(null)"
+                                        @click="showMenus = false"
+                                        class="w-full text-left px-3 py-2 rounded-md transition {{ $menuFilter === null ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
+                                    >
+                                        All Menus
+                                    </button>
+                                    
+                                    @forelse($menus as $menu)
+                                        <button 
+                                            wire:click="setMenu({{ $menu->id }})"
+                                            @click="showMenus = false"
+                                            class="w-full text-left px-3 py-2 rounded-md transition {{ $menuFilter === $menu->id ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
+                                        >
+                                            {{ $menu->title }}
+                                        </button>
+                                    @empty
+                                        <div class="text-gray-500 text-sm italic px-3 py-2">No menus available</div>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Backdrop for mobile filter drawers -->
+                    <div 
+                        x-show="showCategories || showMenus" 
+                        @click="showCategories = false; showMenus = false"
+                        class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+                    ></div>
+
                     <!-- Right Column - Products -->
                     <div class="md:w-3/4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                             @forelse ($products as $product)
                                 <div class="bg-white rounded-lg shadow overflow-hidden">
-                                    <div class="bg-amber-50 p-4 flex justify-center items-center h-48">
+                                    <div class="bg-amber-50 p-3 flex justify-center items-center h-36 sm:h-48">
                                         @if ($product->image_url)
                                             <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                                 class="h-full w-auto object-contain">
@@ -123,28 +231,28 @@
                                         @endif
                                     </div>
 
-                                    <div class="p-4">
+                                    <div class="p-3 sm:p-4">
                                         <div class="flex justify-between items-start">
                                             <div>
-                                                <h3 class="text-lg font-semibold text-gray-900">{{ $product->name }}</h3>
-                                                <p class="text-sm text-gray-600 line-clamp-2 mt-1">{{ $product->description }}</p>
+                                                <h3 class="text-base sm:text-lg font-semibold text-gray-900">{{ $product->name }}</h3>
+                                                <p class="text-xs sm:text-sm text-gray-600 line-clamp-2 mt-1">{{ $product->description }}</p>
                                             </div>
-                                            <span class="px-2 py-1 bg-amber-50 text-amber-700 font-semibold rounded-lg">
+                                            <span class="px-2 py-1 bg-amber-50 text-amber-700 font-semibold rounded-lg text-xs sm:text-sm whitespace-nowrap">
                                                 ${{ number_format($product->base_price, 2) }}
                                             </span>
                                         </div>
 
-                                        <div class="mt-4 flex gap-2">
+                                        <div class="mt-3 sm:mt-4 flex gap-2">
                                             <button 
                                                 wire:click="startCustomizing({{ $product->id }})"
                                                 @click="showCustomization = true"
-                                                class="flex-1 px-4 py-2 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700"
+                                                class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-700"
                                             >
                                                 Customize
                                             </button>
                                             <button 
                                                 wire:click="addProductToCart({{ $product->id }})"
-                                                class="flex-1 px-4 py-2 border border-amber-600 text-amber-600 font-medium rounded-lg hover:bg-amber-50"
+                                                class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 border border-amber-600 text-amber-600 text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-50"
                                             >
                                                 Add to Cart
                                             </button>
@@ -152,15 +260,15 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="col-span-full flex flex-col items-center justify-center py-12 bg-white rounded-lg shadow">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="col-span-full flex flex-col items-center justify-center py-8 sm:py-12 bg-white rounded-lg shadow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 text-amber-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <p class="text-gray-500 text-center">No products found.</p>
-                                    @if($search || $categoryFilter)
+                                    <p class="text-gray-500 text-center text-sm sm:text-base">No products found.</p>
+                                    @if($search || $categoryFilter || $menuFilter)
                                         <button 
                                             wire:click="resetFilters"
-                                            class="mt-3 px-4 py-2 text-amber-700 underline hover:text-amber-800"
+                                            class="mt-3 px-4 py-2 text-amber-700 text-sm sm:text-base underline hover:text-amber-800"
                                         >
                                             Clear filters
                                         </button>
@@ -172,13 +280,16 @@
                 </div>
             </div>
 
-            <!-- Customization Panel - Shown when customizing a product -->
-            <div x-show="showCustomization" x-transition:enter="transition ease-out duration-300"
+            <!-- Customization Panel - Full screen on mobile -->
+            <div x-show="showCustomization" 
+                x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-4" class="bg-white rounded-lg shadow-lg p-6">
+                x-transition:leave-end="opacity-0 transform translate-y-4" 
+                class="fixed inset-0 z-40 bg-white sm:static sm:z-auto sm:rounded-lg sm:shadow-lg p-4 sm:p-6 overflow-auto"
+            >
                 @if ($currentProduct)
                     <div>
                         <div class="flex justify-between items-center mb-6">
@@ -258,14 +369,17 @@
                 @endif
             </div>
 
-            <!-- Shopping Cart - Toggleable -->
-            <div x-show="showCart" x-transition:enter="transition ease-out duration-300"
+            <!-- Shopping Cart - Full screen on mobile -->
+            <div x-show="showCart" 
+                x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-4" @toggle-cart.window="showCart = !showCart"
-                class="bg-white rounded-lg shadow-lg p-6">
+                x-transition:leave-end="opacity-0 transform translate-y-4" 
+                @toggle-cart.window="showCart = !showCart"
+                class="fixed inset-0 z-40 bg-white sm:static sm:z-auto sm:rounded-lg sm:shadow-lg p-4 sm:p-6 overflow-auto"
+            >
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold text-gray-900">Your Cart</h2>
                     <button @click="showCart = false" class="text-gray-500 hover:text-gray-700">
@@ -372,13 +486,16 @@
                 @endif
             </div>
 
-            <!-- Checkout Form -->
-            <div x-show="showCheckout" x-transition:enter="transition ease-out duration-300"
+            <!-- Checkout Form - Full screen on mobile -->
+            <div x-show="showCheckout" 
+                x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-4" class="bg-white rounded-lg shadow-lg p-6">
+                x-transition:leave-end="opacity-0 transform translate-y-4" 
+                class="fixed inset-0 z-40 bg-white sm:static sm:z-auto sm:rounded-lg sm:shadow-lg p-4 sm:p-6 overflow-auto"
+            >
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold text-gray-900">Finalize Your Order</h2>
                     <button @click="showCheckout = false; showCart = true" class="text-gray-500 hover:text-gray-700">
