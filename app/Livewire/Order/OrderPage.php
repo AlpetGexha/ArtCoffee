@@ -542,7 +542,7 @@ final class OrderPage extends Component
     private function calculateOrderTotal(): float
     {
         $subtotal = $this->calculateCartTotal();
-
+        
         // Tax is already included in the price (18%)
         $discount = 0;
         if ($this->usePoints && auth()->check()) {

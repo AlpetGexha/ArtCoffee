@@ -2,8 +2,8 @@
     x-data="{
         refreshInterval: null,
         init() {
-            // Auto refresh every 15 seconds
-            this.refreshInterval = setInterval(() => {
+
+          this.refreshInterval = setInterval(() => {
                 @this.refresh();
             }, 7000);
 
