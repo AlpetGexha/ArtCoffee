@@ -12,16 +12,14 @@
             </a>
 
             <flux:navbar class="-mb-px max-lg:hidden">
-                <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                <flux:navlist.item icon="home" :href="route('order')" :current="request()->routeIs('order')" wire:navigate>{{ __('order') }}</flux:navlist.item>
-                <flux:navlist.item icon="home" :href="route('gift-cards.send')" :current="request()->routeIs('gift-cards.send')" wire:navigate>{{ __('gift-cards.send') }}</flux:navlist.item>
-                <flux:navlist.item icon="home" :href="route('gift-cards.redeem')" :current="request()->routeIs('gift-cards.redeem')" wire:navigate>{{ __('gift-cards.redeem') }}</flux:navlist.item>
-                <flux:navlist.item icon="home" :href="route('orders.history')" :current="request()->routeIs('orders.history')" wire:navigate>{{ __('orders.history') }}</flux:navlist.item>
+                {{-- <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item> --}}
+                <flux:navlist.item icon="shopping-bag" :href="route('order')" :current="request()->routeIs('order')" wire:navigate>{{ __('Order') }}</flux:navlist.item>
+                <flux:navlist.item icon="clock"  :href="route('orders.history')" :current="request()->routeIs('orders.history')" wire:navigate>{{ __('Order History') }}</flux:navlist.item>
             </flux:navbar>
 
             <flux:spacer />
 
-            <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
+            {{-- <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
                 <flux:tooltip :content="__('Search')" position="bottom">
                     <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" :label="__('Search')" />
                 </flux:tooltip>
@@ -43,7 +41,7 @@
                         label="Documentation"
                     />
                 </flux:tooltip>
-            </flux:navbar>
+            </flux:navbar> --}}
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="top" align="end">
@@ -79,6 +77,12 @@
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
+                    <flux:menu.radio.group>
+                        <flux:menu.item  icon="gift" :href="route('gift-cards.send')" :current="request()->routeIs('gift-cards.send')" wire:navigate>{{ __('Send Gift Card') }}</flux:menu.item >
+                        <flux:menu.item  icon="gift" :href="route('gift-cards.redeem')" :current="request()->routeIs('gift-cards.redeem')" wire:navigate>{{ __('Redeem Gift Card') }}</flux:menu.item>
+                     </flux:menu.radio.group>
+
+                    <flux:menu.separator />
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
@@ -100,23 +104,26 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')">
-                    <flux:navlist.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    {{-- <flux:navlist.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
-                    </flux:navlist.item>
+                    </flux:navlist.item> --}}
+                    <flux:navlist.item icon="shopping-bag" :href="route('order')" :current="request()->routeIs('order')" wire:navigate>{{ __('Order') }}</flux:navlist.item>
+                    <flux:navlist.item icon="clock" :href="route('orders.history')" :current="request()->routeIs('orders.history')" wire:navigate>{{ __('Order History') }}</flux:navlist.item>
+
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
-            <flux:navlist variant="outline">
+            {{-- <flux:navlist variant="outline">
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
                 </flux:navlist.item>
 
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
                 {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
+                </flux:navlist.item> --}}
+            {{-- </flux:navlist> --}}
         </flux:sidebar>
 
         {{ $slot }}
