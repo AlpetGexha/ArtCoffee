@@ -9,6 +9,10 @@ use Livewire\Volt\Volt;
 
 Route::view('/', 'welcome')->name('home');
 
+Route::get('/dashboard', function () {
+    return to_route('order');
+})->name('dashboard');
+
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
