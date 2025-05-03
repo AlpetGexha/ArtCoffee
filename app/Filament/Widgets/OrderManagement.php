@@ -69,7 +69,7 @@ class OrderManagement extends Widget
     {
         return [
             'default' => 1,
-            'sm' => 2,
+            'sm' => 1,
             'md' => 2,
             'lg' => 3
         ];
@@ -140,7 +140,7 @@ class OrderManagement extends Widget
     /**
      * Update order status.
      */
-    public function updateOrderStatus(int $orderId, string $status): void
+    public function updateOrderStatus(int $orderId, OrderStatus $status): void
     {
         $order = Order::find($orderId);
 
@@ -148,7 +148,7 @@ class OrderManagement extends Widget
             return;
         }
 
-        $order->status = $status;
+        $order->status = $status->value;
         $order->save();
 
         // Notify the customer about the order status change
@@ -163,7 +163,7 @@ class OrderManagement extends Widget
      */
     public function markAsReady(int $orderId): void
     {
-        $this->updateOrderStatus($orderId, OrderStatus::READY->value);
+        $this->updateOrderStatus($orderId, OrderStatus::READY);
     }
 
     /**
@@ -171,7 +171,7 @@ class OrderManagement extends Widget
      */
     public function markAsProcessing(int $orderId): void
     {
-        $this->updateOrderStatus($orderId, OrderStatus::PROCESSING->value);
+        $this->updateOrderStatus($orderId, OrderStatus::PROCESSING);
     }
 
     /**
@@ -179,7 +179,23 @@ class OrderManagement extends Widget
      */
     public function markAsPicked(int $orderId): void
     {
-        $this->updateOrderStatus($orderId, OrderStatus::COMPLETED->value);
+        $this->updateOrderStatus($orderId, OrderStatus::COMPLETED);
+    }
+
+    /**
+     * Mark order as delivered.
+     */
+    public function markAsDelivered(int $orderId): void
+    {
+        $this->updateOrderStatus($orderId, OrderStatus::READY);
+    }
+
+    /**
+     * Cancel order.
+     */
+    public function cancelOrder(int $orderId): void
+    {
+        $this->updateOrderStatus($orderId, OrderStatus::CANCELLED);
     }
 
     /**
@@ -197,5 +213,9 @@ class OrderManagement extends Widget
         $order->save();
 
         $this->loadOrders();
+    }
+    public function markAsConfirm(int $orderId): void
+    {
+        $this->updateOrderStatus($orderId, OrderStatus::COMPLETED);
     }
 }
