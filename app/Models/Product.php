@@ -41,4 +41,9 @@ final class Product extends Model
             ->withPivot(['custom_price', 'discount_price'])
             ->withTimestamps();
     }
+
+    public function product_options()
+    {
+        return $this->hasMany(ProductOption::class);
+    }
 }

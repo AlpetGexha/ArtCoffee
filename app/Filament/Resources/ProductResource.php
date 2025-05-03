@@ -63,32 +63,6 @@ final class ProductResource extends Resource
                         //     ->directory('products')
                         //     ->columnSpanFull(),
 
-                        Forms\Components\Repeater::make('ingredients')
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->required(),
-                                Forms\Components\TextInput::make('quantity')
-                                    ->required(),
-                            ])
-                            ->columns(2)
-                            ->columnSpanFull()
-                            ->defaultItems(0)
-                            ->hiddenLabel(),
-
-                        Forms\Components\Repeater::make('nutritional_info')
-                            ->schema([
-                                Forms\Components\TextInput::make('nutrient')
-                                    ->required(),
-                                Forms\Components\TextInput::make('amount')
-                                    ->required(),
-                                Forms\Components\TextInput::make('unit')
-                                    ->required(),
-                            ])
-                            ->columns(3)
-                            ->columnSpanFull()
-                            ->defaultItems(0)
-                            ->hiddenLabel(),
-
                         Forms\Components\TextInput::make('preparation_time_minutes')
                             ->numeric()
                             ->suffix('minutes'),
@@ -187,7 +161,7 @@ final class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // RelationManagers\ProductOptionsRelationManager::class,
+            RelationManagers\ProductOptionsRelationManager::class,
         ];
     }
 
