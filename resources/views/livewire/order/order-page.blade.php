@@ -614,7 +614,7 @@
                             </label>
 
                             <!-- Credit Card Option -->
-                            <label
+                            {{-- <label
                                 class="flex items-center space-x-2 p-3 border rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
                                 :class="{ 'bg-amber-50 border-amber-500': $wire.paymentMethod === 'card' }">
                                 <input type="radio" name="paymentMethod" value="card"
@@ -623,7 +623,7 @@
                                     <span class="font-medium">Credit Card</span>
                                     <p class="text-sm text-gray-500">Pay at pickup with card</p>
                                 </div>
-                            </label>
+                            </label> --}}
 
                             <!-- Loyalty Points Payment Option -->
                             @auth
