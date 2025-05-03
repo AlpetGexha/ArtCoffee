@@ -59,11 +59,5 @@ final class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugin(\TomatoPHP\FilamentWallet\FilamentWalletPlugin::make());
-        // ->navigationGroups([
-        //     'Shop Management',
-        //     'Menu Management',
-        //     'Order Management',
-        //     'User Management',
-        // ]);
     }
 }
