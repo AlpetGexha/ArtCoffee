@@ -58,9 +58,10 @@
                     Auto-refreshes every 10 seconds. Last updated: {{ now()->format('H:i:s') }}
                 </p>
 
-                {{-- Orders Grid --}}
+                {{-- Orders Grid - Responsive layout with consistent card sizes --}}
                 @forelse($orders as $order)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols- gap-4">
+                    {{-- First Order (Priority order) --}}
+                    <div class="mb-6">
                         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
                             {{-- Order Header --}}
                             <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
@@ -219,6 +220,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                     @break
                 @empty
                     <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -242,9 +244,9 @@
 
                 {{-- Display remaining orders in a grid --}}
                 @if($orders && $orders->count() > 1)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach($orders->skip(1) as $order)
-                            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
+                            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 h-full flex flex-col">
                                 {{-- Order Header --}}
                                 <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
                                     <div class="font-medium">
@@ -274,7 +276,7 @@
                                 </div>
 
                                 {{-- Order Content --}}
-                                <div class="px-4 py-3 space-y-3">
+                                <div class="px-4 py-3 space-y-3 flex-grow">
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <span class="text-xs text-gray-500 dark:text-gray-400">Customer</span>
@@ -343,7 +345,7 @@
                                 </div>
 
                                 {{-- Order Actions --}}
-                                <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+                                <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 mt-auto">
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="flex flex-col gap-2">
                                             {{-- Status Actions --}}
