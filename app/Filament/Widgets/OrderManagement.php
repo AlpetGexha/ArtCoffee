@@ -1,0 +1,148 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Actions\Notifications\SendOrderStatusNotification;
+use App\Enum\OrderStatus;
+use App\Models\Order;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
+
+class OrderManagement extends Widget
+{
+    protected static ?int $sort = 1;
+
+    protected int | string | array $columnSpan = 'full';
+
+    protected static ?string $heading = 'Active Orders';
+
+    /**
+     * The orders for display in the widget.
+     */
+    public ?Collection $orders = null;
+
+    /**
+     * Filter for order status.
+     */
+    public string $statusFilter = 'all';
+
+    /**
+     * Filter for today's orders.
+     */
+    public bool $todayOnly = false;
+
+    /**
+     * {@inheritDoc}
+     */
+    protected static string $view = 'filament.widgets.order-management';
+
+    /**
+     * Mount the widget and load initial data.
+     */
+    public function mount(): void
+    {
+        $this->loadOrders();
+    }
+
+    /**
+     * Get the grid configuration for the widget layout.
+     */
+    protected function getGridColumns(): int | array
+    {
+        return [
+            'default' => 1,
+            'sm' => 2,
+            'md' => 2,
+            'lg' => 3
+        ];
+    }
+
+    /**
+     * Load orders based on filters.
+     */
+    public function loadOrders(): void
+    {
+        $query = Order::query()
+            ->with([
+                'user',
+                'items.product',
+                'items.orderItemCustomizations.productOption'
+            ])
+            ->latest();
+
+        // Apply status filter
+        if ($this->statusFilter !== 'all') {
+            $query->where('status', $this->statusFilter);
+        } else {
+            // Default to showing only pending and processing orders
+            $query->whereIn('status', [
+                OrderStatus::PENDING->value,
+                OrderStatus::PROCESSING->value,
+            ]);
+        }
+
+        // Apply today filter
+        if ($this->todayOnly) {
+            $query->whereDate('created_at', Carbon::today());
+        }
+
+        $this->orders = $query->take(9)->get();
+    }
+
+    /**
+     * Update the status filter and reload orders.
+     */
+    public function filterByStatus(string $status): void
+    {
+        $this->statusFilter = $status;
+        $this->loadOrders();
+    }
+
+    /**
+     * Toggle today's orders filter.
+     */
+    public function toggleTodayFilter(): void
+    {
+        $this->todayOnly = !$this->todayOnly;
+        $this->loadOrders();
+    }
+
+    /**
+     * Update order status.
+     */
+    public function updateOrderStatus(int $orderId, string $status): void
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return;
+        }
+
+        $order->status = $status;
+        $order->save();
+
+        // Notify the customer about the order status change
+        app(SendOrderStatusNotification::class)->handle($order);
+
+        // Reload orders to refresh the view
+        $this->loadOrders();
+    }
+
+    /**
+     * Mark order as processing.
+     */
+    public function markAsProcessing(int $orderId): void
+    {
+        $this->updateOrderStatus($orderId, OrderStatus::PROCESSING->value);
+    }
+
+    /**
+     * Mark order as completed (picked).
+     */
+    public function markAsPicked(int $orderId): void
+    {
+        $this->updateOrderStatus($orderId, OrderStatus::COMPLETED->value);
+    }
+}
