@@ -191,9 +191,9 @@
                                 <div
                                     class="bg-white rounded-lg shadow overflow-hidden {{ $this->isProductInCart($product->id) ? 'ring-2 ring-green-500' : '' }}">
                                     <div class="bg-amber-50 p-3 flex justify-center items-center h-36 sm:h-48">
-                                        @if ($product->image_url)
-                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                                class="h-full w-auto object-contain">
+                                        @if ($product->getFirstMediaUrl('product_images'))
+                                            <img src="{{ $product->getFirstMediaUrl('product_images') }}" alt="{{ $product->name }}"
+                                                class="h-full w-full object-cover">
                                         @else
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-amber-300"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
