@@ -13,6 +13,10 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 final class ProductResource extends Resource
 {
@@ -53,6 +57,16 @@ final class ProductResource extends Resource
                             ->autosize()
                             ->rows(4)
                             ->columnSpanFull(),
+
+                        SpatieMediaLibraryFileUpload::make('product_images')
+                            ->collection('product_images')
+                            ->image()
+                            ->responsiveImages()
+                            ->conversion('thumb')
+                            ->imageEditor()
+                            ->directory('products')
+                            ->visibility('public')
+                            ->columnSpanFull(),
                     ])->columns(3),
 
                 Forms\Components\Section::make('Product Details')
@@ -65,7 +79,8 @@ final class ProductResource extends Resource
 
                         Forms\Components\TextInput::make('preparation_time_minutes')
                             ->numeric()
-                            ->suffix('minutes'),
+                            ->suffix('minutes')
+                            ->required(),
 
                         Forms\Components\TextInput::make('loyalpoints_per_item')
                             ->label('Loyalty Points')
@@ -81,6 +96,12 @@ final class ProductResource extends Resource
         return $table
             ->defaultSort('category', 'asc')
             ->columns([
+                SpatieMediaLibraryImageColumn::make('product_images')
+                    ->collection('product_images')
+                    ->label('Image')
+                    ->circular()
+                    ->height(80),
+
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->weight(FontWeight::Bold),
