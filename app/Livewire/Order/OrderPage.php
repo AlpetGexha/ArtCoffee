@@ -424,8 +424,8 @@ final class OrderPage extends Component
         // Process loyalty points payment if selected
         if ($this->usePoints && auth()->check()) {
             app(LoyaltyService::class)->redeemPoints(
-                user: auth()->user(),
-                amount: $subtotal
+                 auth()->user(),
+                 $subtotal
             );
         } elseif (auth()->check() && $totalAmount > 0) {
             // Add loyalty points for the purchase if not paying with points
