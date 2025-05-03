@@ -17,10 +17,11 @@
         <flux:navbar class="-mb-px max-lg:hidden">
             <flux:navlist.item icon="shopping-bag" :href="route('order')" :current="request()->routeIs('order')"
                 wire:navigate>{{ __('Order') }}</flux:navlist.item>
+        @auth
             <flux:navlist.item icon="clock" :href="route('orders.history')"
                 :current="request()->routeIs('orders.history')" wire:navigate>{{ __('Order History') }}
             </flux:navlist.item>
-
+        @endauth
         </flux:navbar>
 
         <flux:spacer />
@@ -87,7 +88,7 @@
         class="lg:hidden border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-        <a href="{{ route('dashboard') }}" class="ms-1 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+        <a href="{{ route('home') }}" class="ms-1 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
             <x-app-logo />
         </a>
 
@@ -98,9 +99,11 @@
                     </flux:navlist.item> --}}
                 <flux:navlist.item icon="shopping-bag" :href="route('order')"
                     :current="request()->routeIs('order')" wire:navigate>{{ __('Order') }}</flux:navlist.item>
-                <flux:navlist.item icon="clock" :href="route('orders.history')"
-                    :current="request()->routeIs('orders.history')" wire:navigate>{{ __('Order History') }}
-                </flux:navlist.item>
+                @auth
+                    <flux:navlist.item icon="clock" :href="route('orders.history')"
+                        :current="request()->routeIs('orders.history')" wire:navigate>{{ __('Order History') }}
+                    </flux:navlist.item>
+                @endauth
 
             </flux:navlist.group>
         </flux:navlist>
@@ -109,10 +112,10 @@
 
         <flux:navlist variant="outline">
 
-            <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit"
+            {{-- <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit"
                 target="_blank">
                 {{ __('Repository') }}
-            </flux:navlist.item>
+            </flux:navlist.item> --}}
 
         </flux:navlist>
     </flux:sidebar>

@@ -5,16 +5,9 @@ use App\Livewire\GiftCard\SendGiftCard;
 use App\Livewire\Order\OrderPage;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
-Route::get('/welcome',function(){
-    return view('welcome');
-});
-Route::get('/', function () {
-    return redirect('order');
-})->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+
+Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
