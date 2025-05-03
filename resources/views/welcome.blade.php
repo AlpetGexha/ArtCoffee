@@ -39,7 +39,7 @@
             <!-- QR Code -->
             <div class="flex flex-col items-center justify-center space-y-6">
                 <div class="w-72 h-72 bg-white p-6 rounded-2xl shadow-xl transform hover:scale-[1.02] transition-transform">
-                    <img src="{{ asset('images/frame1.png') }}" alt="Skano për të Porositur" class="w-full h-full">
+                    <img src="{{ asset('images/1fram1.png') }}" alt="Skano për të Porositur" class="w-full h-full">
                 </div>
                 <div class="text-center space-y-2">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Porositni Online</h3>
