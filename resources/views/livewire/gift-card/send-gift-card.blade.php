@@ -73,7 +73,14 @@
                         >
                         @error('recipientEmail') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
-
+<style>
+    select {
+    appearance: none; /* Resets native styling */
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    padding-right: 2rem; /* Add space for custom arrow */
+}
+    </style>
                     <!-- Occasion Selection -->
                     <div>
                         <label for="occasion" class="block text-sm font-medium text-gray-700 mb-1">Occasion (Optional)</label>
