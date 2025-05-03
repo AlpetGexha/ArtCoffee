@@ -34,10 +34,6 @@ final class ProductOptionResource extends Resource
                     ->default(0),
                 Forms\Components\Toggle::make('is_available')
                     ->required(),
-                Forms\Components\TextInput::make('display_order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
             ]);
     }
 
@@ -57,9 +53,6 @@ final class ProductOptionResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_available')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('display_order')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -302,7 +302,7 @@
                                 $options = App\Models\ProductOption::where('product_id', $currentProduct->id)
                                     ->where('is_available', true)
                                     ->orderBy('option_category')
-                                    ->orderBy('display_order')
+                                    // ->orderBy('display_order')
                                     ->get()
                                     ->groupBy('option_category');
                             @endphp
