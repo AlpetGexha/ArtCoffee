@@ -29,8 +29,8 @@
                 @endauth
 
                 <button class="relative flex items-center px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white font-medium rounded-lg text-sm sm:text-base"
-                    x-data="{ cartCount: 0 }" 
-                    x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })" 
+                    x-data="{ cartCount: 0 }"
+                    x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })"
                     @click="$dispatch('toggle-cart')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -65,16 +65,16 @@
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input 
-                            wire:model.live.debounce.300ms="search" 
-                            type="text" 
-                            placeholder="Search for items..." 
+                        <input
+                            wire:model.live.debounce.300ms="search"
+                            type="text"
+                            placeholder="Search for items..."
                             class="block w-full pl-10 pr-3 py-3 border-0 focus:ring-0 focus:outline-none"
                         >
                     </div>
                     @if($search || $categoryFilter || $menuFilter)
-                        <button 
-                            wire:click="resetFilters" 
+                        <button
+                            wire:click="resetFilters"
                             class="p-3 text-gray-400 hover:text-gray-500"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -87,17 +87,17 @@
                 <!-- Filter Buttons for Mobile -->
                 <div class="grid grid-cols-2 gap-3 md:hidden">
                     <!-- Category Filter Button -->
-                    <button 
+                    <button
                         @click="showCategories = !showCategories; showMenus = false"
                         class="flex items-center justify-between px-4 py-2 bg-white rounded-lg shadow text-amber-800 font-medium"
                     >
                         <span>{{ $categoryFilter ? ucfirst($categoryFilter) : 'Categories' }}</span>
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            class="h-5 w-5 transition-transform" 
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 transition-transform"
                             :class="{'rotate-180': showCategories}"
-                            fill="none" 
-                            viewBox="0 0 24 24" 
+                            fill="none"
+                            viewBox="0 0 24 24"
                             stroke="currentColor"
                         >
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -105,17 +105,17 @@
                     </button>
 
                     <!-- Menu Filter Button -->
-                    <button 
+                    <button
                         @click="showMenus = !showMenus; showCategories = false"
                         class="flex items-center justify-between px-4 py-2 bg-white rounded-lg shadow text-amber-800 font-medium"
                     >
                         <span>{{ $menuFilter ? $menus->firstWhere('id', $menuFilter)?->title ?? 'Menus' : 'Menus' }}</span>
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            class="h-5 w-5 transition-transform" 
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 transition-transform"
                             :class="{'rotate-180': showMenus}"
-                            fill="none" 
-                            viewBox="0 0 24 24" 
+                            fill="none"
+                            viewBox="0 0 24 24"
                             stroke="currentColor"
                         >
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -128,7 +128,7 @@
                     <!-- Left Column - Filters (Mobile Drawer, Desktop Sidebar) -->
                     <div class="md:w-1/4 space-y-4">
                         <!-- Categories Filter -->
-                        <div 
+                        <div
                             class="md:static fixed inset-0 z-30 md:z-auto transition-all duration-300 transform md:transform-none bg-white md:bg-transparent shadow-lg md:shadow-none overflow-auto md:overflow-visible"
                             :class="showCategories ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
                         >
@@ -143,16 +143,16 @@
                             <div class="bg-white rounded-lg shadow p-4">
                                 <h2 class="hidden md:block text-xl font-bold text-amber-800 mb-4">Categories</h2>
                                 <div class="space-y-1">
-                                    <button 
+                                    <button
                                         wire:click="setCategory(null)"
                                         @click="showCategories = false"
                                         class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === null ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
                                     >
                                         All Items
                                     </button>
-                                    
+
                                     @forelse($categories as $category)
-                                        <button 
+                                        <button
                                             wire:click="setCategory('{{ $category->value }}')"
                                             @click="showCategories = false"
                                             class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === $category->value ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
@@ -167,7 +167,7 @@
                         </div>
 
                         <!-- Menus Filter -->
-                        <div 
+                        <div
                             class="md:static fixed inset-0 z-30 md:z-auto transition-all duration-300 transform md:transform-none bg-white md:bg-transparent shadow-lg md:shadow-none overflow-auto md:overflow-visible"
                             :class="showMenus ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
                         >
@@ -182,16 +182,16 @@
                             <div class="bg-white rounded-lg shadow p-4">
                                 <h2 class="hidden md:block text-xl font-bold text-amber-800 mb-4">Menus</h2>
                                 <div class="space-y-1">
-                                    <button 
+                                    <button
                                         wire:click="setMenu(null)"
                                         @click="showMenus = false"
                                         class="w-full text-left px-3 py-2 rounded-md transition {{ $menuFilter === null ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
                                     >
                                         All Menus
                                     </button>
-                                    
+
                                     @forelse($menus as $menu)
-                                        <button 
+                                        <button
                                             wire:click="setMenu({{ $menu->id }})"
                                             @click="showMenus = false"
                                             class="w-full text-left px-3 py-2 rounded-md transition {{ $menuFilter === $menu->id ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}"
@@ -207,8 +207,8 @@
                     </div>
 
                     <!-- Backdrop for mobile filter drawers -->
-                    <div 
-                        x-show="showCategories || showMenus" 
+                    <div
+                        x-show="showCategories || showMenus"
                         @click="showCategories = false; showMenus = false"
                         class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
                     ></div>
@@ -243,14 +243,14 @@
                                         </div>
 
                                         <div class="mt-3 sm:mt-4 flex gap-2">
-                                            <button 
+                                            <button
                                                 wire:click="startCustomizing({{ $product->id }})"
                                                 @click="showCustomization = true"
                                                 class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-700"
                                             >
                                                 Customize
                                             </button>
-                                            <button 
+                                            <button
                                                 wire:click="addProductToCart({{ $product->id }})"
                                                 class="flex-1 px-2 py-1.5 sm:px-4 sm:py-2 border border-amber-600 text-amber-600 text-xs sm:text-sm font-medium rounded-lg hover:bg-amber-50"
                                             >
@@ -266,7 +266,7 @@
                                     </svg>
                                     <p class="text-gray-500 text-center text-sm sm:text-base">No products found.</p>
                                     @if($search || $categoryFilter || $menuFilter)
-                                        <button 
+                                        <button
                                             wire:click="resetFilters"
                                             class="mt-3 px-4 py-2 text-amber-700 text-sm sm:text-base underline hover:text-amber-800"
                                         >
@@ -281,13 +281,13 @@
             </div>
 
             <!-- Customization Panel - Full screen on mobile -->
-            <div x-show="showCustomization" 
+            <div x-show="showCustomization"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-4" 
+                x-transition:leave-end="opacity-0 transform translate-y-4"
                 class="fixed inset-0 z-40 bg-white sm:static sm:z-auto sm:rounded-lg sm:shadow-lg p-4 sm:p-6 overflow-auto"
             >
                 @if ($currentProduct)
@@ -370,13 +370,13 @@
             </div>
 
             <!-- Shopping Cart - Full screen on mobile -->
-            <div x-show="showCart" 
+            <div x-show="showCart"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-4" 
+                x-transition:leave-end="opacity-0 transform translate-y-4"
                 @toggle-cart.window="showCart = !showCart"
                 class="fixed inset-0 z-40 bg-white sm:static sm:z-auto sm:rounded-lg sm:shadow-lg p-4 sm:p-6 overflow-auto"
             >
@@ -487,13 +487,13 @@
             </div>
 
             <!-- Checkout Form - Full screen on mobile -->
-            <div x-show="showCheckout" 
+            <div x-show="showCheckout"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-4"
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform translate-y-4" 
+                x-transition:leave-end="opacity-0 transform translate-y-4"
                 class="fixed inset-0 z-40 bg-white sm:static sm:z-auto sm:rounded-lg sm:shadow-lg p-4 sm:p-6 overflow-auto"
             >
                 <div class="flex justify-between items-center mb-6">

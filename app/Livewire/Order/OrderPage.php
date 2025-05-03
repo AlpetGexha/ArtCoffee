@@ -78,7 +78,7 @@ final class OrderPage extends Component
         if ($this->search) {
             $productsQuery->where(function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -413,9 +413,9 @@ final class OrderPage extends Component
         // Process wallet payment if selected
         if ($this->paymentMethod === 'wallet' && auth()->check()) {
             app(ProcessWalletPaymentAction::class)->handle(
-                user: auth()->user(),
-                order: $order,
-                amount: $totalAmount
+                auth()->user(),
+                $order,
+                $totalAmount
             );
         }
 
@@ -428,8 +428,8 @@ final class OrderPage extends Component
         } else if (auth()->check() && $totalAmount > 0) {
             // Add loyalty points for the purchase if not paying with points
             app(LoyaltyService::class)->addPoints(
-                user: auth()->user(),
-                amount: $totalAmount
+                auth()->user(),
+                $totalAmount
             );
         }
 
