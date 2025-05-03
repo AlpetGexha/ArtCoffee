@@ -93,7 +93,8 @@ final class OrderResource extends Resource
                 return $query->latest();
             })
             ->columns([
-                Tables\Columns\TextColumn::make('order_number')
+                Tables\Columns\TextColumn::make('id')
+                ->label('Order ID')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
