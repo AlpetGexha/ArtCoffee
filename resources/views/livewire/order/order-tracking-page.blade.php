@@ -5,7 +5,7 @@
 
           this.refreshInterval = setInterval(() => {
                 @this.refresh();
-            }, 2000);
+            }, 4000);
 
             // Clean up interval when component is destroyed
             this.$on('beforeUnload', () => clearInterval(this.refreshInterval));

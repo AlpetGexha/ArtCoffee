@@ -30,8 +30,9 @@
                     </div>
                 @endauth
 
+                <!-- Cart button for desktop only -->
                 <button
-                    class="relative flex items-center px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white font-medium rounded-lg text-sm sm:text-base"
+                    class="relative hidden sm:flex items-center px-2 py-1.5 sm:px-4 sm:py-2 bg-amber-600 text-white font-medium rounded-lg text-sm sm:text-base"
                     x-data="{ cartCount: 0 }" x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })" @click="$dispatch('toggle-cart')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -46,7 +47,7 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
+    <main class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 pb-24 md:pb-6">
         <!-- Main Content -->
         <div x-data="{
             showCart: false,
@@ -741,4 +742,28 @@
             </div>
         </div>
     </main>
+
+    <!-- Fixed Cart Button for Mobile (hidden during checkout and cart view) -->
+    <div class="fixed bottom-0 left-0 right-0 sm:hidden z-50"
+         x-data="{ cartCount: 0 }"
+         x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })"
+         x-show="!showCart && !showCheckout && !showCustomization">
+        <div class="flex items-center justify-between bg-white shadow-lg border-t border-gray-200 p-3">
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-xs">Your Cart</span>
+                <span class="font-semibold text-gray-900">${{ number_format($cartTotal, 2) }}</span>
+            </div>
+            <button
+                @click="$dispatch('toggle-cart')"
+                class="relative flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 text-white font-medium rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span>View Cart</span>
+                <span x-show="cartCount > 0" x-text="cartCount"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"></span>
+            </button>
+        </div>
+    </div>
 </div>
