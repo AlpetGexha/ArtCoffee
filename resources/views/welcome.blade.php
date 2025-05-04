@@ -21,7 +21,7 @@
                     </a>
                 </div>
             </div>
-            <div class="hidden lg:block lg:w-2/3">
+            <div class="hidden md:block lg:w-2/3">
                 <img src="{{ asset('images/artcaffe-bg.png') }}" alt="Coffee Art" class="w-full">
             </div>
         </div>
