@@ -688,13 +688,13 @@
                     </div>
 
                     <!-- Points Redemption -->
-                    @if (auth()->check() && auth()->user()->available_points > 0)
+                    @if (auth()->check() && auth()->user()->loyalty_points > 0)
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h3 class="text-lg font-medium text-gray-900 mb-3">Redeem Points</h3>
-                            <p class="text-gray-600 mb-2">You have {{ auth()->user()->available_points }} points
+                            <p class="text-gray-600 mb-2">You have {{ auth()->user()->loyalty_points }} points
                                 available.</p>
                             <div class="flex items-center space-x-4">
-                                <input type="number" min="0" max="{{ auth()->user()->available_points }}"
+                                <input type="number" min="0" max="{{ auth()->user()->loyalty_points }}"
                                     wire:model="pointsToRedeem"
                                     class="border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-500 focus:ring-opacity-50 w-24">
                                 <span class="text-gray-600">points = ${{ number_format($pointsToRedeem * 0.1, 2) }}
