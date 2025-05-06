@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Actions\Notifications\SendOrderStatusNotification;
 use App\Enum\OrderStatus;
 use App\Enum\PaymentStatus;
+use App\Events\OrderStatusUpdated;
 use App\Models\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
@@ -152,7 +153,10 @@ class OrderManagement extends Widget
         $order->save();
 
         // Notify the customer about the order status change
-        app(SendOrderStatusNotification::class)->handle($order);
+        // app(SendOrderStatusNotification::class)->handle($order);
+
+        // Broadcast the order status update event
+        event(new OrderStatusUpdated($order));
 
         // Reload orders to refresh the view
         $this->loadOrders();
@@ -217,5 +221,11 @@ class OrderManagement extends Widget
     public function markAsConfirm(int $orderId): void
     {
         $this->updateOrderStatus($orderId, OrderStatus::COMPLETED);
+    }
+    // markAsProgrees
+
+    public function markAsProgrees(int $orderId): void
+    {
+        $this->updateOrderStatus($orderId, OrderStatus::PROCESSING);
     }
 }
