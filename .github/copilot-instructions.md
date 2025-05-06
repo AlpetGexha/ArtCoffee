@@ -104,3 +104,4 @@ When providing code examples or explanations:
 # Others
 
 - Dont remove the namespaces even if they are not used in the code.
+- Dont use the "cd" command in the terminal.
