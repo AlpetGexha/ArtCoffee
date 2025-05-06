@@ -9,7 +9,8 @@ use Illuminate\Support\ServiceProvider;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\URL;
-
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDatabase();
         $this->configureDate();
         $this->configureSchema();
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->isAdmin();
+        });
     }
 
     private function configureEloquent(): void
