@@ -711,10 +711,10 @@
                             rows="3" placeholder="Add a personal message for your order (optional)"></textarea>
                     </div>
 
-                    <div class="flex justify-end">
+                    <div class="flex justify-center sm:justify-end ">
                         <button wire:click="placeOrder"
-                            class="px-6 py-3 bg-amber-600 text-white font-medium rounded-lg transition-all hover:bg-amber-700 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer "
-                            wire:loading.attr="disabled" @if ($paymentMethod === 'wallet' && !$hasEnoughBalance) disabled @endif>
+                            class="w-full mb-12 sm:w-auto px-6 py-3 bg-amber-600 text-white font-medium rounded-lg text-base transition-all hover:bg-amber-700 disabled:opacity-70 disabled:cursor-not-allowed"
+                              wire:loading.attr="disabled" @if ($paymentMethod === 'wallet' && !$hasEnoughBalance) disabled @endif>
                             <span wire:loading.remove>Place Order</span>
                             <span wire:loading>
                                 <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block"
@@ -747,7 +747,7 @@
     <div class="fixed bottom-0 left-0 right-0 sm:hidden z-50"
          x-data="{ cartCount: 0 }"
          x-init="$wire.$on('cart-updated', () => { cartCount = $wire.cart.length })"
-         x-show="!showCart && !showCheckout && !showCustomization">
+         x-show="!showCheckout">
         <div class="flex items-center justify-between bg-white shadow-lg border-t border-gray-200 p-3">
             <div class="flex flex-col">
                 <span class="text-gray-500 text-xs">Your Cart</span>
