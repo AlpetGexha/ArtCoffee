@@ -190,6 +190,11 @@
                                                 Ready To Pick Up
                                             </x-filament::button>
                                         @endif
+                                        <x-filament::button color="info" size="sm"
+                                        wire:click="markAsProgrees({{ $order->id }})"
+                                        wire:loading.attr="disabled" icon="heroicon-s-shopping-bag">
+                                            Progreess
+                                    </x-filament::button>
 
                                         <x-filament::button color="danger" size="sm"
                                             wire:click="cancelOrder({{ $order->id }})" wire:loading.attr="disabled"
