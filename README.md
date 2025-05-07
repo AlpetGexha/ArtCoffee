@@ -40,6 +40,8 @@ The app’s clean and modern design appeals to every type of customer. Real-time
 
 ![Main Page](screenshots/MainPage.png)
 
+![Login Page](screenshots/Login.png)
+
 ![Gift Cards](screenshots/GiftCart.png)
 
 ![Gift Card Redemption](screenshots/GiftCartReddem.png)
