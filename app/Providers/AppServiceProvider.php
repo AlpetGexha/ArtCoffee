@@ -41,6 +41,7 @@ final class AppServiceProvider extends ServiceProvider
 
     private function configureEloquent(): void
     {
+        Model::unguard();
         Model::shouldBeStrict(! app()->isProduction());
         Model::automaticallyEagerLoadRelationships();
     }

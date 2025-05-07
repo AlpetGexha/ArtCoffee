@@ -37,7 +37,7 @@ final class CartService
     {
         $cart = $this->getCartItems();
         $productId = $product->id;
-        
+
         $cartItem = [
             'product_id' => $productId,
             'product_name' => $product->name,
@@ -89,7 +89,7 @@ final class CartService
     public function updateQuantity(int $index, int $change): void
     {
         $cart = $this->getCartItems();
-        
+
         if (isset($cart[$index])) {
             $newQuantity = $cart[$index]['quantity'] + $change;
 
@@ -99,7 +99,7 @@ final class CartService
                 $cart[$index]['quantity'] = $newQuantity;
                 $cart[$index]['total_price'] = $newQuantity *
                     ($cart[$index]['unit_price'] + $cart[$index]['customization_cost']);
-                
+
                 $this->session->put(self::CART_SESSION_KEY, $cart);
             }
         }
@@ -111,7 +111,7 @@ final class CartService
     public function removeFromCart(int $index): void
     {
         $cart = $this->getCartItems();
-        
+
         if (isset($cart[$index])) {
             array_splice($cart, $index, 1);
             $this->session->put(self::CART_SESSION_KEY, $cart);
@@ -125,21 +125,21 @@ final class CartService
     {
         $total = 0;
         $cart = $this->getCartItems();
-        
+
         foreach ($cart as $item) {
             $total += $item['total_price'];
         }
 
         return $total;
     }
-    
+
     /**
      * Check if a product is in the cart.
      */
     public function isProductInCart(int $productId): bool
     {
         $cart = $this->getCartItems();
-        
+
         foreach ($cart as $item) {
             if ($item['product_id'] === $productId) {
                 return true;
@@ -156,7 +156,7 @@ final class CartService
     {
         $quantity = 0;
         $cart = $this->getCartItems();
-        
+
         foreach ($cart as $item) {
             if ($item['product_id'] === $productId) {
                 $quantity += $item['quantity'];
