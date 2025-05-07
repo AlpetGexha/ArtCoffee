@@ -67,4 +67,10 @@ final class ProductOption extends Model
     {
         return $query->where('option_category', $category);
     }
+
+    // add name atribute
+    public function getNameAttribute(): string
+    {
+        return $this->option_name;
+    }
 }
