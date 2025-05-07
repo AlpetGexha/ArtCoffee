@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class DatabaseNotification extends Notification implements ShouldQueue
+final class DatabaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

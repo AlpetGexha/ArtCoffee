@@ -133,7 +133,7 @@
                                         All Items
                                     </button>
 
-                                    @forelse ($categories as $category)
+                                    @forelse ($this->categories() as $category)
                                         <button wire:click="setCategory('{{ $category->value }}')"
                                             @click="showCategories = false"
                                             class="w-full text-left px-3 py-2 rounded-md transition {{ $categoryFilter === $category->value ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}">
@@ -168,7 +168,7 @@
                                         All Menus
                                     </button>
 
-                                    @forelse ($menus as $menu)
+                                    @forelse ($this->menus() as $menu)
                                         <button wire:click="setMenu({{ $menu->id }})" @click="showMenus = false"
                                             class="w-full text-left px-3 py-2 rounded-md transition {{ $menuFilter === $menu->id ? 'bg-amber-50 text-amber-800 font-medium' : 'hover:bg-gray-50' }}">
                                             {{ $menu->title }}
@@ -188,7 +188,7 @@
                     <!-- Right Column - Products -->
                     <div class="md:w-3/4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                            @forelse ($products as $product)
+                            @forelse ($this->products() as $product)
                                 <div
                                     class="bg-white rounded-lg shadow overflow-hidden {{ $this->isProductInCart($product->id) ? 'ring-2 ring-green-500' : '' }}">
                                     <div class="bg-amber-50 p-3 flex justify-center items-center h-36 sm:h-48">
@@ -382,9 +382,9 @@
                     </button>
                 </div>
 
-                @if (count($cart) > 0)
+                @if (count($this->cart()) > 0)
                     <div class="space-y-4 mb-6">
-                        @foreach ($cart as $index => $item)
+                        @foreach ($this->cart() as $index => $item)
                             <div class="flex items-center space-x-4 py-3 border-b">
                                 <div class="flex-1">
                                     <h4 class="font-medium text-gray-900">{{ $item['product_name'] }}</h4>

@@ -1,15 +1,19 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use App\Livewire\GiftCard\RedeemGiftCard;
 use App\Livewire\GiftCard\SendGiftCard;
 use App\Livewire\Order\OrderPage;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
+Route::post('broadcasting/auth', function () {
+    return auth()->check();
+});
 
 Route::view('/', 'welcome')->name('home');
 
-Route::get('/dashboard', function () {
+Route::get('dashboard', function () {
     return to_route('order');
 })->name('dashboard');
 
@@ -20,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 
+    // Change from direct Livewire component to controller
     Route::get('order', OrderPage::class)->name('order');
 
     // Order Tracking Routes

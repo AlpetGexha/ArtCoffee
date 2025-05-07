@@ -127,7 +127,7 @@
                                     <div>
                                         <span class="text-xs text-gray-500 dark:text-gray-400">Order Items</span>
                                         <div class="mt-1 max-h-40 overflow-y-auto">
-                                            @forelse($order->items as $item)
+                                            @forelse ($order->items as $item)
                                                 <div
                                                     class="py-2 {{ !$loop->last ? 'border-b dark:border-gray-700' : '' }}">
                                                     <div class="flex justify-between text-sm">
@@ -183,7 +183,7 @@
                                                 wire:loading.attr="disabled" icon="heroicon-s-clipboard-document-check">
                                                 Confirm
                                             </x-filament::button>
-                                        @elseif($order->status->value === \App\Enum\OrderStatus::PENDING->value || \App\Enum\OrderStatus::PROCESSING->value)
+                                        @elseif ($order->status->value === \App\Enum\OrderStatus::PENDING->value || \App\Enum\OrderStatus::PROCESSING->value)
                                             <x-filament::button color="info" size="sm"
                                                 wire:click="markAsReady({{ $order->id }})"
                                                 wire:loading.attr="disabled" icon="heroicon-s-shopping-bag">

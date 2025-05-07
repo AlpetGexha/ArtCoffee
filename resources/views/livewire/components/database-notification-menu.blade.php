@@ -3,7 +3,7 @@
     @click.away="open = false"
     @keydown.escape.window="open = false"
     class="relative"
-    wire:poll.7s="$dispatch('refresh-notifications')"
+    {{-- wire:poll.7s="$dispatch('refresh-notifications')" --}}
 >
     <!-- Notification Bell Icon with Badge -->
     <button

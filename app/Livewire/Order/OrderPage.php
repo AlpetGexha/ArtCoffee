@@ -6,35 +6,39 @@ use App\Enum\OrderStatus;
 use App\Enum\PaymentStatus;
 use App\Enum\ProductCategory;
 use App\Livewire\Actions\Order\ProcessWalletPaymentAction;
+use App\Models\Branch;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderItemCustomization;
 use App\Models\Product;
 use App\Models\ProductOption;
+use App\Services\CartService;
 use App\Services\LoyaltyService;
+use Filament\Notifications\Notification;
 use Illuminate\View\View;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\Attributes\Lazy;
-use Filament\Notifications\Notification;
 
 #[Lazy()]
 final class OrderPage extends Component
 {
-    public array $cart = [];
-    public array $customizations = [];
     public ?Product $currentProduct = null;
     public bool $isCustomizing = false;
+    public array $customizations = [];
     public string $specialInstructions = '';
     public string $personalMessage = '';
     public string $redemptionType = 'in-store'; // 'in-store' or 'online'
     public int $pointsToRedeem = 0;
     public string $paymentMethod = 'cash'; // 'cash', 'card', 'wallet'
     public bool $insufficientBalance = false;
-    public bool $usePoints = false; // New property for loyalty points payment
-    public int $availablePoints = 0; // New property for user's available points
-    public int $requiredPoints = 0; // New property for points required for purchase
+    public bool $usePoints = false; // Property for loyalty points payment
+    public int $availablePoints = 0; // Property for user's available points
+    public int $requiredPoints = 0; // Property for points required for purchase
+
+    private readonly CartService $cartService;
 
     #[Url]
     public string $search = '';
@@ -45,12 +49,24 @@ final class OrderPage extends Component
     #[Url]
     public ?int $menuFilter = null;
 
+    protected $casts = [
+        'customizations' => 'array',
+    ];
+
+    /**
+     * Mount the component.
+     */
+    public function boot(CartService $cartService): void
+    {
+        $this->cartService = $cartService;
+    }
+
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        // Initialize the cart
+        // Initialize the component
         $this->resetCustomization();
 
         // Set default payment method to wallet if user is logged in
@@ -61,11 +77,11 @@ final class OrderPage extends Component
     }
 
     /**
-     * Render the component.
+     * Get filtered products based on search and filters.
      */
-    public function render(): View
+    #[Computed]
+    public function products(): mixed
     {
-        // Query to get products based on search and category filters
         $productsQuery = Product::where('is_available', true);
 
         // Apply menu filter if provided
@@ -90,68 +106,169 @@ final class OrderPage extends Component
             $productsQuery->where('category', $this->categoryFilter);
         }
 
-        // Get filtered products
-        $products = $productsQuery->get();
+        return $productsQuery->get();
+    }
 
-        // Get all available categories
-        $categories = ProductCategory::cases();
+    /**
+     * Get all available categories.
+     */
+    #[Computed]
+    public function categories(): array
+    {
+        return ProductCategory::cases();
+    }
 
-        // Get all available menus
-        $menus = Menu::all();
+    /**
+     * Get all available menus.
+     */
+    #[Computed]
+    public function menus(): mixed
+    {
+        return Menu::all();
+    }
 
-        $cartTotal = $this->calculateCartTotal();
-        $subtotal = $cartTotal;
+    /**
+     * Get cart items from the CartService.
+     */
+    #[Computed]
+    public function cart(): array
+    {
+        return $this->cartService->getCartItems();
+    }
 
-        // Tax calculation - 18% is already included in the price
-        $taxRate = 0.18;
-        $preTaxAmount = $subtotal / (1 + $taxRate);
-        $tax = $subtotal - $preTaxAmount;
+    /**
+     * Get cart total from the CartService.
+     */
+    #[Computed]
+    public function cartTotal(): float
+    {
+        return $this->cartService->calculateCartTotal();
+    }
 
-        // Get loyalty service
-        $loyaltyService = app(LoyaltyService::class);
+    /**
+     * Get subtotal (same as cart total in this case).
+     */
+    #[Computed]
+    public function subtotal(): float
+    {
+        return $this->cartTotal;
+    }
 
+    /**
+     * Get pre-tax amount.
+     */
+    #[Computed]
+    public function preTaxAmount(): float
+    {
+        return $this->subtotal / (1 + $this->taxRate);
+    }
+
+    /**
+     * Get tax amount.
+     */
+    #[Computed]
+    public function tax(): float
+    {
+        return $this->subtotal - $this->preTaxAmount;
+    }
+
+    /**
+     * Get tax rate.
+     */
+    #[Computed]
+    public function taxRate(): float
+    {
+        return 0.18; // 18% tax rate
+    }
+
+    /**
+     * Get user's wallet balance.
+     */
+    #[Computed]
+    public function walletBalance(): float
+    {
+        return auth()->check() ? auth()->user()->balanceFloat : 0;
+    }
+
+    /**
+     * Check if user has enough wallet balance
+     */
+    #[Computed]
+    public function hasEnoughBalance(): bool
+    {
+        return $this->walletBalance >= $this->totalAmount;
+    }
+
+    /**
+     * Get discount amount based on loyalty points.
+     */
+    #[Computed]
+    public function discount(): float
+    {
+        if ($this->usePoints && $this->hasEnoughLoyaltyPoints) {
+            return $this->subtotal; // Full discount if using points for the entire order
+        }
+
+        return $this->pointsToRedeem * 0.10; // Assuming 10 cents per point as before
+    }
+
+    /**
+     * Get total order amount after discounts.
+     */
+    #[Computed]
+    public function totalAmount(): float
+    {
+        return $this->subtotal - $this->discount;
+    }
+
+    /**
+     * Check if user has enough loyalty points.
+     */
+    #[Computed]
+    public function hasEnoughLoyaltyPoints(): bool
+    {
+        return auth()->check() && $this->availablePoints >= $this->requiredPoints;
+    }
+
+    /**
+     * Get points value formatted as dollars.
+     */
+    #[Computed]
+    public function pointsValueFormatted(): string
+    {
+        return app(LoyaltyService::class)->formatPointsAsDollars($this->availablePoints);
+    }
+
+    /**
+     * Render the component.
+     */
+    public function render(): View
+    {
         // Update available points if user is authenticated
         if (auth()->check()) {
             $this->availablePoints = auth()->user()->loyalty_points ?? 0;
         }
 
         // Calculate required points for the current order
-        $this->requiredPoints = $loyaltyService->calculatePointsEarned($subtotal);
-        $hasEnoughLoyaltyPoints = auth()->check() && $this->availablePoints >= $this->requiredPoints;
+        $loyaltyService = app(LoyaltyService::class);
+        $this->requiredPoints = $loyaltyService->calculatePointsEarned($this->subtotal);
 
-        // Calculate discount if using loyalty points
-        $discount = 0;
-        if ($this->usePoints && $hasEnoughLoyaltyPoints) {
-            $discount = $subtotal; // Full discount if using points for the entire order
-        } else {
-            $discount = $this->pointsToRedeem * 0.10; // Assuming 10 cents per point as before
-        }
-
-        $totalAmount = $subtotal - $discount;
-
-        // Get user wallet balance if authenticated
-        $walletBalance = auth()->check() ? auth()->user()->balanceFloat : 0;
-        $hasEnoughBalance = $walletBalance >= $totalAmount;
-
-        // Format points value as dollars for display
-        $pointsValueFormatted = $loyaltyService->formatPointsAsDollars($this->availablePoints);
-
-        return view('livewire.order.order-page', [
-            'products' => $products,
-            'categories' => $categories,
-            'menus' => $menus,
-            'cartTotal' => $cartTotal,
-            'subtotal' => $subtotal,
-            'preTaxAmount' => $preTaxAmount,
-            'tax' => $tax,
-            'taxRate' => $taxRate,
-            'walletBalance' => $walletBalance,
-            'hasEnoughBalance' => $hasEnoughBalance,
-            'totalAmount' => $totalAmount,
+        return view('livewire.order.order-page',[
+            'products' => $this->products(),
+            'categories' => $this->categories(),
+            'menus' => $this->menus(),
+            'cartTotal' => $this->cartTotal(),
+            'subtotal' => $this->subtotal(),
+            'preTaxAmount' => $this->preTaxAmount(),
+            'tax' => $this->tax(),
+            'taxRate' => $this->taxRate(),
+            'walletBalance' => $this->walletBalance(),
+            'hasEnoughBalance' => $this->hasEnoughBalance(),
+            'totalAmount' => $this->totalAmount(),
             'availablePoints' => $this->availablePoints,
             'requiredPoints' => $this->requiredPoints,
-            'hasEnoughLoyaltyPoints' => $hasEnoughLoyaltyPoints,
-            'pointsValueFormatted' => $pointsValueFormatted,
+            'hasEnoughLoyaltyPoints' => $this->hasEnoughLoyaltyPoints(),
+            'pointsValueFormatted' => $this->pointsValueFormatted(),
         ]);
     }
 
@@ -179,12 +296,18 @@ final class OrderPage extends Component
         $this->reset(['search', 'categoryFilter', 'menuFilter']);
     }
 
+    /**
+     * Start the customization process for a product.
+     */
     public function startCustomizing(Product $product): void
     {
         $this->currentProduct = $product;
         $this->isCustomizing = true;
     }
 
+    /**
+     * Add the current product to cart.
+     */
     public function addToCart(): void
     {
         if (! $this->currentProduct) {
@@ -192,47 +315,13 @@ final class OrderPage extends Component
         }
 
         $productId = $this->currentProduct->id;
-        $cartItem = [
-            'product_id' => $productId,
-            'product_name' => $this->currentProduct->name,
-            'quantity' => 1,
-            'unit_price' => $this->currentProduct->base_price,
-            'total_price' => $this->currentProduct->base_price,
-            'customization_cost' => 0,
-            'customizations' => $this->customizations[$productId] ?? [],
-            'special_instructions' => $this->specialInstructions,
-        ];
+        $customizations = $this->customizations[$productId] ?? [];
 
-        // Calculate additional costs from customizations
-        if (isset($this->customizations[$productId])) {
-            foreach ($this->customizations[$productId] as $category => $optionId) {
-                $option = ProductOption::find($optionId);
-                if ($option) {
-                    $cartItem['customization_cost'] += $option->additional_price;
-                    $cartItem['total_price'] += $option->additional_price;
-                }
-            }
-        }
-
-        // Add to cart or update quantity if already exists
-        $found = false;
-        foreach ($this->cart as $key => $item) {
-            if (
-                $item['product_id'] === $productId &&
-                $item['customizations'] === $cartItem['customizations'] &&
-                $item['special_instructions'] === $cartItem['special_instructions']
-            ) {
-                $this->cart[$key]['quantity']++;
-                $this->cart[$key]['total_price'] = $this->cart[$key]['quantity'] *
-                    ($this->cart[$key]['unit_price'] + $this->cart[$key]['customization_cost']);
-                $found = true;
-                break;
-            }
-        }
-
-        if (! $found) {
-            $this->cart[] = $cartItem;
-        }
+        $this->cartService->addToCart(
+            $this->currentProduct,
+            $customizations,
+            $this->specialInstructions
+        );
 
         $this->resetCustomization();
         $this->dispatch('cart-updated');
@@ -254,32 +343,28 @@ final class OrderPage extends Component
         $this->addToCart();
     }
 
-    public function updateQuantity($index, $change): void
+    /**
+     * Update the quantity of an item in the cart.
+     */
+    public function updateQuantity(int $index, int $change): void
     {
-        if (isset($this->cart[$index])) {
-            $newQuantity = $this->cart[$index]['quantity'] + $change;
-
-            if ($newQuantity <= 0) {
-                $this->removeFromCart($index);
-            } else {
-                $this->cart[$index]['quantity'] = $newQuantity;
-                $this->cart[$index]['total_price'] = $newQuantity *
-                    ($this->cart[$index]['unit_price'] + $this->cart[$index]['customization_cost']);
-            }
-
-            $this->dispatch('cart-updated');
-        }
+        $this->cartService->updateQuantity($index, $change);
+        $this->dispatch('cart-updated');
     }
 
-    public function removeFromCart($index): void
+    /**
+     * Remove an item from the cart.
+     */
+    public function removeFromCart(int $index): void
     {
-        if (isset($this->cart[$index])) {
-            array_splice($this->cart, $index, 1);
-            $this->dispatch('cart-updated');
-        }
+        $this->cartService->removeFromCart($index);
+        $this->dispatch('cart-updated');
     }
 
-    public function setCustomization($productId, $category, $optionId): void
+    /**
+     * Set a customization option for a product.
+     */
+    public function setCustomization(int $productId, string $category, int $optionId): void
     {
         if (! isset($this->customizations[$productId])) {
             $this->customizations[$productId] = [];
@@ -288,6 +373,9 @@ final class OrderPage extends Component
         $this->customizations[$productId][$category] = $optionId;
     }
 
+    /**
+     * Reset customization state.
+     */
     public function resetCustomization(): void
     {
         $this->currentProduct = null;
@@ -296,7 +384,7 @@ final class OrderPage extends Component
     }
 
     /**
-     * Update payment method and validate wallet balance if selected.
+     * Handle payment method updates.
      */
     public function updatedPaymentMethod(): void
     {
@@ -328,9 +416,10 @@ final class OrderPage extends Component
      */
     public function placeOrder()
     {
-        if (empty($this->cart)) {
-            $this->addError('cart', 'Your cart is empty');
+        $cart = $this->cartService->getCartItems();
 
+        if (empty($cart)) {
+            $this->addError('cart', 'Your cart is empty');
             return redirect()->back();
         }
 
@@ -345,7 +434,7 @@ final class OrderPage extends Component
         }
 
         // Calculate totals
-        $subtotal = $this->calculateCartTotal();
+        $subtotal = $this->cartService->calculateCartTotal();
 
         // Calculate tax - 18% is already included in the price
         $taxRate = 0.18;
@@ -363,10 +452,9 @@ final class OrderPage extends Component
         $totalAmount = $subtotal - $discount;
 
         // Get the default branch
-        $defaultBranch = \App\Models\Branch::first();
+        $defaultBranch = Branch::first();
         if (! $defaultBranch) {
             $this->addError('branch', 'No branch is available for processing orders');
-
             return redirect()->back();
         }
 
@@ -388,15 +476,8 @@ final class OrderPage extends Component
             'special_instructions' => $this->personalMessage,
         ]);
 
-        // Send notification to customer
-        // Notification::make()
-        //     ->title('Order Placed Successfully')
-        //     ->success()
-        //     ->sendToDatabase($order);
-
-
         // Create order items
-        foreach ($this->cart as $item) {
+        foreach ($cart as $item) {
             $orderItem = OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
@@ -407,7 +488,7 @@ final class OrderPage extends Component
                 'special_instructions' => $item['special_instructions'],
             ]);
 
-            // Create order item    
+            // Create order item customizations
             if (! empty($item['customizations'])) {
                 foreach ($item['customizations'] as $category => $optionId) {
                     $productOption = ProductOption::find($optionId);
@@ -446,7 +527,7 @@ final class OrderPage extends Component
         }
 
         // Reset cart and redirect
-        $this->cart = [];
+        $this->cartService->clearCart();
         $this->personalMessage = '';
         $this->pointsToRedeem = 0;
         $this->usePoints = false;
@@ -461,13 +542,7 @@ final class OrderPage extends Component
      */
     public function isProductInCart(int $productId): bool
     {
-        foreach ($this->cart as $item) {
-            if ($item['product_id'] === $productId) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->cartService->isProductInCart($productId);
     }
 
     /**
@@ -475,15 +550,12 @@ final class OrderPage extends Component
      */
     public function getProductQuantityInCart(int $productId): int
     {
-        $quantity = 0;
+        return $this->cartService->getProductQuantityInCart($productId);
+    }
 
-        foreach ($this->cart as $item) {
-            if ($item['product_id'] === $productId) {
-                $quantity += $item['quantity'];
-            }
-        }
-
-        return $quantity;
+    public function placeholder()
+    {
+        return view('livewire.order.partials.product-skeleton');
     }
 
     /**
@@ -493,7 +565,6 @@ final class OrderPage extends Component
     {
         if (! auth()->check()) {
             $this->addError('payment', 'Please log in to use wallet payment');
-
             return false;
         }
 
@@ -503,12 +574,10 @@ final class OrderPage extends Component
         if ($walletBalance < $totalAmount) {
             $this->insufficientBalance = true;
             $this->addError('payment', 'Insufficient wallet balance');
-
             return false;
         }
 
         $this->insufficientBalance = false;
-
         return true;
     }
 
@@ -520,17 +589,15 @@ final class OrderPage extends Component
         if (! auth()->check()) {
             $this->addError('points', 'Please log in to use loyalty points');
             $this->usePoints = false;
-
             return false;
         }
 
-        $subtotal = $this->calculateCartTotal();
+        $subtotal = $this->cartService->calculateCartTotal();
         $loyaltyService = app(LoyaltyService::class);
 
         if (! $loyaltyService->hasEnoughPoints(auth()->user(), $subtotal)) {
             $this->addError('points', 'You do not have enough loyalty points for this purchase');
             $this->usePoints = false;
-
             return false;
         }
 
@@ -542,7 +609,7 @@ final class OrderPage extends Component
      */
     private function calculateOrderTotal(): float
     {
-        $subtotal = $this->calculateCartTotal();
+        $subtotal = $this->cartService->calculateCartTotal();
 
         // Tax is already included in the price (18%)
         $discount = 0;
@@ -556,33 +623,5 @@ final class OrderPage extends Component
         }
 
         return $subtotal - $discount;
-    }
-
-    /**
-     * Send notifications to admin users about new order.
-     */
-    private function notifyAdmins(Order $order): void
-    {
-        // Get all admin users
-        $admins = \App\Models\User::where('is_admin', true)->get();
-
-        // Create a notification for each admin
-        foreach ($admins as $admin) {
-            $admin->notify(new \App\Notifications\NewOrderNotification($order));
-        }
-    }
-
-    private function calculateCartTotal(): float
-    {
-        $total = 0;
-        foreach ($this->cart as $item) {
-            $total += $item['total_price'];
-        }
-
-        return $total;
-    }
-    public function placeholder()
-    {
-        return view('livewire.order.partials.product-skeleton');
     }
 }

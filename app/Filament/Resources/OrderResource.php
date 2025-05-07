@@ -94,7 +94,7 @@ final class OrderResource extends Resource
             })
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                ->label('Order ID')
+                    ->label('Order ID')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
@@ -145,11 +145,11 @@ final class OrderResource extends Resource
                         return $query
                             ->when(
                                 $data['ordered_from'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('ordered_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('ordered_at', '>=', $date),
                             )
                             ->when(
                                 $data['ordered_until'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('ordered_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('ordered_at', '<=', $date),
                             );
                     }),
             ])

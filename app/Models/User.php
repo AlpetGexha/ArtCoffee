@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-final class User extends Authenticatable implements Wallet, FilamentUser
+final class User extends Authenticatable implements FilamentUser, Wallet
 {
     use HasFactory, HasWalletFloat, Notifiable;
 
@@ -83,6 +83,13 @@ final class User extends Authenticatable implements Wallet, FilamentUser
         return $query->where('is_admin', false);
     }
 
+    // canAccessPanel
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->is_admin;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -97,12 +104,5 @@ final class User extends Authenticatable implements Wallet, FilamentUser
             'date_of_birth' => 'date',
             'preferences' => 'array',
         ];
-    }
-
-    // canAccessPanel
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->is_admin;
     }
 }

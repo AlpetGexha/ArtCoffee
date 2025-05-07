@@ -5,9 +5,8 @@ namespace App\Actions\Notifications;
 use App\Enum\OrderStatus;
 use App\Models\Order;
 use App\Models\User;
-use Illuminate\Support\Str;
 
-class SendOrderStatusNotification
+final class SendOrderStatusNotification
 {
     protected SendDatabaseNotification $sendNotification;
 
@@ -19,9 +18,9 @@ class SendOrderStatusNotification
     /**
      * Send an order status notification to a user.
      */
-    public function handle(Order $order, OrderStatus $previousStatus = null): void
+    public function handle(Order $order, ?OrderStatus $previousStatus = null): void
     {
-        if (!$order->user) {
+        if (! $order->user) {
             return;
         }
 
@@ -52,23 +51,23 @@ class SendOrderStatusNotification
         return match ($order->status) {
             OrderStatus::COMPLETED => [
                 'Order Completed',
-                "Your order #{$order->id} has been completed. Thank you for your business!"
+                "Your order #{$order->id} has been completed. Thank you for your business!",
             ],
             OrderStatus::PROCESSING => [
                 'Order Processing',
-                "Your order #{$order->id} is now being prepared."
+                "Your order #{$order->id} is now being prepared.",
             ],
             OrderStatus::PENDING => [
                 'Order Received',
-                "Your order #{$order->id} has been received and is pending processing."
+                "Your order #{$order->id} has been received and is pending processing.",
             ],
             OrderStatus::CANCELLED => [
                 'Order Cancelled',
-                "Your order #{$order->id} has been cancelled."
+                "Your order #{$order->id} has been cancelled.",
             ],
             default => [
                 'Order Update',
-                "Your order #{$order->id} has been updated to {$order->status->value}."
+                "Your order #{$order->id} has been updated to {$order->status->value}.",
             ]
         };
     }

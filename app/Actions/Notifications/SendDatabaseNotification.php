@@ -5,18 +5,17 @@ namespace App\Actions\Notifications;
 use App\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Model;
 
-class SendDatabaseNotification
+final class SendDatabaseNotification
 {
     /**
      * Send a database notification to a user.
      *
-     * @param \Illuminate\Database\Eloquent\Model $notifiable The user or entity to notify
-     * @param string $title The notification title
-     * @param string $message The notification message
-     * @param string|null $type The notification type (e.g., 'order', 'payment', etc.)
-     * @param string|null $actionText The text for the action button
-     * @param string|null $actionUrl The URL for the action button
-     * @return void
+     * @param  Model  $notifiable  The user or entity to notify
+     * @param  string  $title  The notification title
+     * @param  string  $message  The notification message
+     * @param  string|null  $type  The notification type (e.g., 'order', 'payment', etc.)
+     * @param  string|null  $actionText  The text for the action button
+     * @param  string|null  $actionUrl  The URL for the action button
      */
     public function handle(
         Model $notifiable,
@@ -27,7 +26,7 @@ class SendDatabaseNotification
         ?string $actionUrl = null
     ): void {
         // Guard against non-notifiable models
-        if (!method_exists($notifiable, 'notify')) {
+        if (! method_exists($notifiable, 'notify')) {
             return;
         }
 
