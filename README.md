@@ -1,4 +1,4 @@
-## ☕ Digital Café Companion – All the Juicy Details
+## ☕ Digital Café Companion
 
 We’ve built a smart, modern Café Companion App that reimagines how customers interact with coffee shops. From seamless ordering to real-time updates, every touchpoint is designed for convenience, speed, and personalization.
 
