@@ -76,3 +76,6 @@ The app’s clean and modern design appeals to every type of customer. Real-time
 ![Admin Table Management](screenshots/AdminTable.png)
 
 ![Admin User Management](screenshots/AdminUser.png)
+
+
+THIS PROJECT WAS MADE IN 48Hours in Junction x Tiran 2025
