@@ -1,57 +1,78 @@
+## ☕ Digital Café Companion – All the Juicy Details
 
-- Birthday reminders or push notifications
- 	- scheduale edhe ne email edhe ne notifications
+We’ve built a smart, modern Café Companion App that reimagines how customers interact with coffee shops. From seamless ordering to real-time updates, every touchpoint is designed for convenience, speed, and personalization.
 
-Mi Shtu menujat
- - Mi mujt me sgeth shum produkte ne menu
-  - me ja mundis me ndru cmimin baz
-  - me lon discount field ose custom price
-  - nese cmimi ndryshon ather me mujt me shfaq te user cmimin Real edhe te Modifikum
+### 💡 Key Features
 
-Loyalti point
- - Cdo produt e ka loayl point (x)
- - Me shfaq Loyal point afer ku jon paren
- - Mi shtu loyal point per cdo order qe i ka bo useri
- - me mundsu me ble me loyal point
+#### 🛍️ For Customers
 
-Qr Kodi
- - Me mujt cdo menu me pas ka ni qr kode qe i kallxon produoket ne to (Product filter by Menu)
- - <https://larazeus.com/docs/qr/v1/introduction>
+- **Custom Orders**: Fully personalize drinks and food with all available options.
+- **Scan & Order at Table**: Instantly order by scanning a QR code at your seat.
+- **Loyalty Program**: Earn points on purchases and redeem them for free items.
+- **Digital Gift Cards**: Send gift cards with personal messages for special occasions.
+- **Real-Time Notifications**: Get instant updates when your order is being prepared or ready.
+- **Birthday Surprise**: Users get a **free coffee** notification at **06:00 AM** on their birthday.
+- **Advanced Filters**: Easily browse the menu by category, diet, popularity, or caffeine level.
+- **Light & Dark Mode**: UI adapts to user preference for accessibility and comfort.
 
-Notification kur bohet porosia
- - Filament Notification
- - Infolist per order te Admini me pa cka ka porosit
-  - Edit, Status Change, Ready To Pick Up
-  - Mi shku notification ne user dashboard
+#### 🧑‍💼 For Admins & Staff
 
---
+- **Admin Dashboard**: Track orders live, manage menus, and oversee loyalty rewards.
+- **Product Customization**: Set up custom drink options, stock levels, and availability.
+- **Live Order Tracking**: Monitor orders from placement to pickup or delivery in real-time.
+- **Background Queue Jobs**: All emails, alerts, and scheduled tasks (e.g., birthday rewards) run in efficient background queues for better performance.
 
-User Resorce me shtu relation ship per userat
- - Order qe i ka porosit mrena 3 muje e fundit
- - Krejt transaksionet e Userit me wallet vleren
- - Top myshterive me ju qu ka ni loyal point  
+### 🎯 Why It Works
 
-Product Resorce realacion me custom item order
- - .
+The app’s clean and modern design appeals to every type of customer. Real-time notifications and efficient background processing ensure smooth experiences on both ends — whether you’re sipping a cappuccino or serving one. From loyalty perks to admin control, our Digital Café Companion blends personalization, technology, and great coffee into one powerful tool.
 
-# A osht vetsherbim a me kamarier
+### 📱 Tech Stack
 
-	# - Duhet me shtu te cila tavolin me dergu
- 
- 
-Gift cart
- - A don me ja mundsu user me perdor automatikisht
- - a don me rujt kodin me ja qu vet dikujt tjeter
- - nese shkom me email kode mu aktivizu automatikish
- - Gift cart Histori, edhe notification
+- Laravel
+- Livewire
+- Tailwind CSS
+- Alpine.js
+- MySQL
 
-Review per product (1-5, komment)
+### Screenshots
 
-Transaksione e Userit mi shfaq dikun te user profili
+#### Customer Experience
 
-Me ja pershtat view per me bo custom color me flux
+![Main Page](screenshots/MainPage.png)
 
-Te order Histori nuk pe bohet track order id po veq e fundit
+![Gift Cards](screenshots/GiftCart.png)
 
-Mi shtu do sene ne cache (Order Customize, Product)
-Kush me pas access ne admin (me email custom niher)
+![Gift Card Redemption](screenshots/GiftCartReddem.png)
+
+#### Ordering System
+
+![Order List](screenshots/OrderList.png)
+
+![Additional Custom Options](screenshots/OrderCutum1.png)
+
+![Order Cart](screenshots/OrderCart.png)
+
+![Order Checkout](screenshots/OrderCheckout.png)
+
+![Order Tracking](screenshots/OrderTracking.png)
+
+![Order History](screenshots/OrderHistroy.png)
+
+![Order Panel](screenshots/OrderPanel.png)
+
+
+#### Admin Interface
+
+![Admin Gift Cart Management](screenshots/AdminGiftCart.png)
+
+![Admin Menu Management](screenshots/AdminMenu.png)
+
+![Admin Order Table](screenshots/AdminOrderTable.png)
+
+![Admin Product Overview](screenshots/ADminProduct.png)
+
+![Admin Product Edit](screenshots/AdminProductEdit.png)
+
+![Admin Table Management](screenshots/AdminTable.png)
+
+![Admin User Management](screenshots/AdminUser.png)
