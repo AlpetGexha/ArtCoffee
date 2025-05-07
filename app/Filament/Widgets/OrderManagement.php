@@ -153,7 +153,7 @@ class OrderManagement extends Widget
         $order->save();
 
         // Notify the customer about the order status change
-        // app(SendOrderStatusNotification::class)->handle($order);
+        app(SendOrderStatusNotification::class)->handle($order);
 
         // Broadcast the order status update event
         event(new OrderStatusUpdated($order));

@@ -9,6 +9,7 @@
                     if (event.id == @this.get('orderId')) {
                         console.log('refresh before');
                         @this.refresh();
+                        $dispatch('refresh-notifications');
                         console.log('refresh after');
                     }
                 });
