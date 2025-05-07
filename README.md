@@ -1,4 +1,4 @@
-## ☕ Digital Café Companion – All the Juicy Details
+## ☕ Digital Café Companion
 
 We’ve built a smart, modern Café Companion App that reimagines how customers interact with coffee shops. From seamless ordering to real-time updates, every touchpoint is designed for convenience, speed, and personalization.
 
@@ -78,3 +78,6 @@ The app’s clean and modern design appeals to every type of customer. Real-time
 ![Admin Table Management](screenshots/AdminTable.png)
 
 ![Admin User Management](screenshots/AdminUser.png)
+
+
+THIS PROJECT WAS MADE IN 48Hours in Junction x Tiran 2025
