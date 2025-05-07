@@ -18,7 +18,7 @@
 
                 <div class="border-b dark:border-gray-700 mb-3"></div>
 
-                @forelse($getRecord()->orderItems->sortByDesc('created_at') as $orderItem)
+                @forelse ($getRecord()->orderItems->sortByDesc('created_at') as $orderItem)
                     <div class="mb-3 pb-3 {{ !$loop->last ? 'border-b dark:border-gray-700' : '' }}">
                         <div class="flex justify-between">
                             <span class="font-medium text-gray-900 dark:text-white">
@@ -29,16 +29,16 @@
                             </span>
                         </div>
 
-                        @if($orderItem->orderItemCustomizations->isNotEmpty())
+                        @if ($orderItem->orderItemCustomizations->isNotEmpty())
                             <div class="mt-2 pl-4">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Customizations:</p>
                                 <ul class="space-y-1">
-                                    @foreach($orderItem->orderItemCustomizations as $customization)
+                                    @foreach ($orderItem->orderItemCustomizations as $customization)
                                         <li class="text-xs flex justify-between">
                                             <span class="text-gray-600 dark:text-gray-300">
                                                 {{ $customization->productOption->optionCategory->name }}: {{ $customization->productOption->name }}
                                             </span>
-                                            @if($customization->option_price > 0)
+                                            @if ($customization->option_price > 0)
                                                 <span class="text-gray-500 dark:text-gray-400">
                                                     +${{ number_format($customization->option_price, 2) }}
                                                 </span>
@@ -49,7 +49,7 @@
                             </div>
                         @endif
 
-                        @if($orderItem->special_instructions)
+                        @if ($orderItem->special_instructions)
                             <div class="mt-2 pl-4">
                                 <p class="text-xs text-gray-500 dark:text-gray-400">Instructions:</p>
                                 <p class="text-xs text-gray-600 dark:text-gray-300 italic">

@@ -8,19 +8,12 @@ use App\Enum\PaymentStatus;
 use App\Events\OrderStatusUpdated;
 use App\Models\Order;
 use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\On;
 
-class OrderManagement extends Widget
+final class OrderManagement extends Widget
 {
-    protected static ?int $sort = 1;
-
-    protected int | string | array $columnSpan = 'full';
-
-    protected static ?string $heading = 'Active Orders';
-
     /**
      * The orders for display in the widget.
      */
@@ -40,11 +33,16 @@ class OrderManagement extends Widget
      * Sort direction for orders.
      */
     public string $sortDirection = 'asc'; // 'asc' for oldest first, 'desc' for newest first
+    protected static ?int $sort = 1;
+
+    protected static ?string $heading = 'Active Orders';
 
     /**
      * {@inheritDoc}
      */
     protected static string $view = 'filament.widgets.order-management';
+
+    protected int|string|array $columnSpan = 'full';
 
     /**
      * Mount the widget and load initial data.
@@ -64,19 +62,6 @@ class OrderManagement extends Widget
     }
 
     /**
-     * Get the grid configuration for the widget layout.
-     */
-    protected function getGridColumns(): int | array
-    {
-        return [
-            'default' => 1,
-            'sm' => 1,
-            'md' => 2,
-            'lg' => 3
-        ];
-    }
-
-    /**
      * Load orders based on filters.
      */
     public function loadOrders(): void
@@ -85,7 +70,7 @@ class OrderManagement extends Widget
             ->with([
                 'user',
                 'items.product',
-                'items.orderItemCustomizations.productOption'
+                'items.orderItemCustomizations.productOption',
             ]);
 
         // Apply status filter
@@ -134,7 +119,7 @@ class OrderManagement extends Widget
      */
     public function toggleTodayFilter(): void
     {
-        $this->todayOnly = !$this->todayOnly;
+        $this->todayOnly = ! $this->todayOnly;
         $this->loadOrders();
     }
 
@@ -145,17 +130,14 @@ class OrderManagement extends Widget
     {
         $order = Order::find($orderId);
 
-        if (!$order) {
+        if (! $order) {
             return;
         }
 
         $order->status = $status->value;
         $order->save();
 
-        // Notify the customer about the order status change
         app(SendOrderStatusNotification::class)->handle($order);
-
-        // Broadcast the order status update event
         event(new OrderStatusUpdated($order));
 
         // Reload orders to refresh the view
@@ -209,7 +191,7 @@ class OrderManagement extends Widget
     {
         $order = Order::find($orderId);
 
-        if (!$order) {
+        if (! $order) {
             return;
         }
 
@@ -218,6 +200,7 @@ class OrderManagement extends Widget
 
         $this->loadOrders();
     }
+
     public function markAsConfirm(int $orderId): void
     {
         $this->updateOrderStatus($orderId, OrderStatus::COMPLETED);
@@ -227,5 +210,18 @@ class OrderManagement extends Widget
     public function markAsProgrees(int $orderId): void
     {
         $this->updateOrderStatus($orderId, OrderStatus::PROCESSING);
+    }
+
+    /**
+     * Get the grid configuration for the widget layout.
+     */
+    protected function getGridColumns(): int|array
+    {
+        return [
+            'default' => 1,
+            'sm' => 1,
+            'md' => 2,
+            'lg' => 3,
+        ];
     }
 }

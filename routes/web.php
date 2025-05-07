@@ -6,13 +6,13 @@ use App\Livewire\Order\OrderPage;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::post('/broadcasting/auth', function () {
+Route::post('broadcasting/auth', function () {
     return auth()->check();
 });
 
 Route::view('/', 'welcome')->name('home');
 
-Route::get('/dashboard', function () {
+Route::get('dashboard', function () {
     return to_route('order');
 })->name('dashboard');
 

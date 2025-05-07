@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Components;
 
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class DatabaseNotificationMenu extends Component
+final class DatabaseNotificationMenu extends Component
 {
     /**
      * The unread notifications.
@@ -68,7 +67,7 @@ class DatabaseNotificationMenu extends Component
      */
     public function toggleDropdown(): void
     {
-        $this->isOpen = !$this->isOpen;
+        $this->isOpen = ! $this->isOpen;
     }
 
     /**

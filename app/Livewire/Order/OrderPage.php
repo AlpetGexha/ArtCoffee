@@ -13,11 +13,11 @@ use App\Models\OrderItemCustomization;
 use App\Models\Product;
 use App\Models\ProductOption;
 use App\Services\LoyaltyService;
+use Filament\Notifications\Notification;
 use Illuminate\View\View;
+use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\Attributes\Lazy;
-use Filament\Notifications\Notification;
 
 #[Lazy()]
 final class OrderPage extends Component
@@ -394,7 +394,6 @@ final class OrderPage extends Component
         //     ->success()
         //     ->sendToDatabase($order);
 
-
         // Create order items
         foreach ($this->cart as $item) {
             $orderItem = OrderItem::create([
@@ -407,7 +406,7 @@ final class OrderPage extends Component
                 'special_instructions' => $item['special_instructions'],
             ]);
 
-            // Create order item    
+            // Create order item
             if (! empty($item['customizations'])) {
                 foreach ($item['customizations'] as $category => $optionId) {
                     $productOption = ProductOption::find($optionId);
@@ -484,6 +483,11 @@ final class OrderPage extends Component
         }
 
         return $quantity;
+    }
+
+    public function placeholder()
+    {
+        return view('livewire.order.partials.product-skeleton');
     }
 
     /**
@@ -580,9 +584,5 @@ final class OrderPage extends Component
         }
 
         return $total;
-    }
-    public function placeholder()
-    {
-        return view('livewire.order.partials.product-skeleton');
     }
 }

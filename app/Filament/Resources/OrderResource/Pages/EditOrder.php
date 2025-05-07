@@ -5,7 +5,6 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Actions\Notifications\SendOrderStatusNotification;
 use App\Enum\OrderStatus;
 use App\Filament\Resources\OrderResource;
-use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

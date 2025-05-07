@@ -7,7 +7,7 @@ use Filament\Notifications\Livewire\Notifications;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
-class FilamentNotificationsProvider extends ServiceProvider
+final class FilamentNotificationsProvider extends ServiceProvider
 {
     /**
      * Register services.

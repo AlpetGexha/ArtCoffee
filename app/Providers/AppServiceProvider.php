@@ -2,22 +2,21 @@
 
 namespace App\Providers;
 
-use App\Services\LoyaltyService;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\ServiceProvider;
-use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\URL;
 use App\Models\User;
+use App\Services\LoyaltyService;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+final class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-
     public function register(): void
     {
         $this->app->singleton(LoyaltyService::class, function ($app) {
@@ -42,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureEloquent(): void
     {
-        Model::shouldBeStrict(!app()->isProduction());
+        Model::shouldBeStrict(! app()->isProduction());
         Model::automaticallyEagerLoadRelationships();
     }
 
