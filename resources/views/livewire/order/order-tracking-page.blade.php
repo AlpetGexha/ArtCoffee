@@ -1,14 +1,24 @@
 <div class="min-h-screen bg-gray-50 py-8"
     x-data="{
-        refreshInterval: null,
         init() {
+            // Listen for Echo events through Alpine.js
+            Echo.channel('orders')
+                .listen('.order.updated', (event) => {
+                    console.log('Check');
 
-          this.refreshInterval = setInterval(() => {
-                @this.refresh();
-            }, 4000);
+                    if (event.id == @this.get('orderId')) {
+                        console.log('refresh before');
+                        @this.refresh();
+                        console.log('refresh after');
+                    }
+                });
 
-            // Clean up interval when component is destroyed
-            this.$on('beforeUnload', () => clearInterval(this.refreshInterval));
+                Echo.private(`orders.`+@this.get('orderId'))
+                    .listen('.order.updated', (event) => {
+                        console.log('JASHT IF 2');
+                        @this.refresh();
+                        console.log('mrena IF 2');
+                    });
         }
     }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -352,7 +362,12 @@
                             <!-- Footer actions -->
                             <div class="bg-gray-50 px-4 py-4 sm:px-6 flex justify-between items-center">
                                 <div class="flex items-center text-sm text-gray-500">
-                                    <span>Auto-refresh every 15s</span>
+                                    <span>
+                                        <svg class="inline-block h-3.5 w-3.5 text-green-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />
+                                        </svg>
+                                        Real-time updates enabled
+                                    </span>
                                 </div>
                                 <button
                                     wire:click="refresh"
