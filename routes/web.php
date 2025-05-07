@@ -6,6 +6,9 @@ use App\Livewire\Order\OrderPage;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
+Route::post('/broadcasting/auth', function () {
+    return auth()->check();
+});
 
 Route::view('/', 'welcome')->name('home');
 
